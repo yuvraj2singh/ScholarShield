@@ -65,7 +65,7 @@ export async function POST(request) {
     try {
       const report = await db.scamReport.create({
         data: {
-          id:              reportId,
+          reportId,
           scholarshipName: body.scholarshipName,
           orgName:         body.orgName,
           url:             body.url || null,
@@ -85,7 +85,7 @@ export async function POST(request) {
 
       return NextResponse.json({
         success:             true,
-        reportId:            report.id,
+        reportId:            report.reportId || report.id,
         message:             'Report received and queued for analyst review within 24 hours.',
         priorityScore,
         estimatedReviewTime: priorityScore > 60 ? '2-4 hours (high priority)' : '24 hours',
@@ -119,13 +119,24 @@ export async function PATCH(request) {
   if (process.env.DATABASE_URL) {
     try {
       const isResolved = body.reviewStatus === 'CONFIRMED' || body.reviewStatus === 'DISMISSED'
-      const updated = await db.scamReport.update({
-        where: { id: body.id },
-        data: {
-          reviewStatus: body.reviewStatus,
-          ...(isResolved ? { resolvedAt: new Date() } : { resolvedAt: null }),
-        },
-      })
+      const isObjectId = /^[0-9a-fA-F]{24}$/.test(body.id)
+
+      const updated = isObjectId
+        ? await db.scamReport.update({
+            where: { id: body.id },
+            data: {
+              reviewStatus: body.reviewStatus,
+              ...(isResolved ? { resolvedAt: new Date() } : { resolvedAt: null }),
+            },
+          })
+        : await db.scamReport.update({
+            where: { reportId: body.id },
+            data: {
+              reviewStatus: body.reviewStatus,
+              ...(isResolved ? { resolvedAt: new Date() } : { resolvedAt: null }),
+            },
+          })
+
       return NextResponse.json({ success: true, data: updated, source: 'prisma' })
     } catch (err) {
       return NextResponse.json({ error: err.message }, { status: 500 })

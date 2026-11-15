@@ -1,35 +1,35 @@
-// Prisma Schema — ScholarGuard Database Layer (Day 7)
-// Run: npx prisma migrate dev --name init
-// Run: npx prisma studio  (visual DB explorer)
+// Prisma Schema — ScholarGuard Database Layer (MongoDB Provider)
+// Push schema to MongoDB: npx prisma db push
+// Visual DB explorer:     npx prisma studio
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 // ─── Scholarships ─────────────────────────────────────────────────────────────
 
 model Scholarship {
-  id          String   @id @default(cuid())
-  name        String
-  org         String
-  url         String
-  award       String
-  status      Status   @default(UNVERIFIED)
-  threatIndex Int      @default(0)
-  vectors     String[] // array of fraud vector IDs
-  domain      String?
-  irsCompliant Boolean @default(false)
-  notes       String[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  org          String
+  url          String
+  award        String   @default("Amount not specified")
+  status       Status   @default(UNVERIFIED)
+  threatIndex  Int      @default(0)
+  vectors      String[] // array of fraud vector IDs
+  domain       String?
+  irsCompliant Boolean  @default(false)
+  notes        String[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  scanReports ScanReport[]
-  scamReports ScamReport[]
+  scanReports  ScanReport[]
+  scamReports  ScamReport[]
 
   @@index([status])
   @@index([threatIndex])
@@ -39,11 +39,11 @@ model Scholarship {
 // ─── Scan Reports (automated forensic audits) ─────────────────────────────────
 
 model ScanReport {
-  id            String   @id @default(cuid())
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
   url           String
   threatIndex   Int
   status        Status
-  engine        String   @default("js-builtin") // "js-builtin" | "python-fastapi"
+  engine        String   @default("js-builtin")
   pillars       Json     // array of pillar objects
   flags         String[]
   feeKeywords   String[]
@@ -53,7 +53,7 @@ model ScanReport {
   auditRef      String   @unique
   createdAt     DateTime @default(now())
 
-  scholarshipId String?
+  scholarshipId String?      @db.ObjectId
   scholarship   Scholarship? @relation(fields: [scholarshipId], references: [id])
 
   @@index([url])
@@ -64,16 +64,17 @@ model ScanReport {
 // ─── Scam Reports (user submissions) ──────────────────────────────────────────
 
 model ScamReport {
-  id              String       @id @default(cuid())
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  reportId        String?      @unique // tracking ID like RPT-XXXXXX
   scholarshipName String
   orgName         String
   url             String?
-  channel         String       // how discovered
+  channel         String       @default("Unknown")
   indicators      String[]     // selected indicator IDs
   amount          Float?       // demanded fee amount
   paymentMethod   String?
   notes           String?
-  submitterRole   String
+  submitterRole   String       @default("Unknown")
   submitterName   String?
   submitterEmail  String?
   anonymous       Boolean      @default(true)
@@ -85,8 +86,8 @@ model ScamReport {
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
 
-  scholarshipId String?
-  scholarship   Scholarship? @relation(fields: [scholarshipId], references: [id])
+  scholarshipId   String?      @db.ObjectId
+  scholarship     Scholarship? @relation(fields: [scholarshipId], references: [id])
 
   @@index([reviewStatus])
   @@index([priorityScore])
@@ -96,10 +97,10 @@ model ScamReport {
 // ─── Analyst Team ─────────────────────────────────────────────────────────────
 
 model Analyst {
-  id         String   @id @default(cuid())
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
   name       String
   email      String   @unique
-  role       String
+  role       String   @default("Analyst")
   avatar     String?
   casesTotal Int      @default(0)
   casesDone  Int      @default(0)
@@ -109,7 +110,7 @@ model Analyst {
 // ─── Watchlist ────────────────────────────────────────────────────────────────
 
 model Watchlist {
-  id        String   @id @default(cuid())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   url       String   @unique
   hostname  String
   reason    String
@@ -136,4 +137,3 @@ enum ReviewStatus {
   CONFIRMED
   DISMISSED
 }
-

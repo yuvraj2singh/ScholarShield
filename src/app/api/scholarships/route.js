@@ -160,7 +160,12 @@ export async function DELETE(request) {
 
   if (process.env.DATABASE_URL) {
     try {
-      await db.scholarship.delete({ where: { id } })
+      const isObjectId = /^[0-9a-fA-F]{24}$/.test(id)
+      if (isObjectId) {
+        await db.scholarship.delete({ where: { id } })
+      } else {
+        await db.scholarship.deleteMany({ where: { url: id } })
+      }
       return NextResponse.json({ success: true, id, source: 'prisma' })
     } catch (err) {
       return NextResponse.json({ error: err.message }, { status: 500 })
