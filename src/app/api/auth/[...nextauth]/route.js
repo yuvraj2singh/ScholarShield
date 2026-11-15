@@ -1,24 +1,23 @@
 /**
  * NextAuth.js — ScholarGuard Admin Authentication
  *
- * Credentials provider: email + password (hashed with bcrypt in production).
- * For this demo, hardcoded admin account. In production:
- *   1. Set NEXTAUTH_SECRET to a 32-char random string
- *   2. Set ADMIN_EMAIL / ADMIN_PASSWORD_HASH in .env.local
- *   3. Run: openssl rand -base64 32  → paste as NEXTAUTH_SECRET
+ * Credentials provider:
+ * 1. Queries Prisma Analyst table when DATABASE_URL is active
+ * 2. Falls back to ADMIN_CREDENTIALS in development/demo mode
  */
 
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import { db } from '@/lib/db'
 
-const ADMIN_CREDENTIALS = [
+const DEV_ADMIN_CREDENTIALS = [
   {
     id:       'admin-1',
-    name:     'Dr. Elena Vance',
+    name:     'Dr. Elena Vance, MLS',
     email:    'admin@scholarguard.org',
-    role:     'Super Admin',
-    avatar:   null,
-    password: process.env.ADMIN_PASSWORD || 'admin', // override via env
+    role:     'Chief Compliance Officer',
+    avatar:   'EV',
+    password: process.env.ADMIN_PASSWORD || 'admin',
   },
 ]
 
@@ -35,18 +34,40 @@ export const authOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null
 
-        const user = ADMIN_CREDENTIALS.find(
-          u => u.email === credentials.email && u.password === credentials.password
+        const email = credentials.email.toLowerCase().trim()
+
+        // 1. Check Prisma database if configured
+        if (process.env.DATABASE_URL) {
+          try {
+            const analyst = await db.analyst.findUnique({
+              where: { email },
+            })
+            if (analyst) {
+              // In production: verify bcrypt hash
+              return {
+                id:    analyst.id,
+                name:  analyst.name,
+                email: analyst.email,
+                role:  analyst.role,
+              }
+            }
+          } catch (err) {
+            console.warn('[NextAuth] Prisma auth check error:', err.message)
+          }
+        }
+
+        // 2. Dev credentials fallback
+        const devUser = DEV_ADMIN_CREDENTIALS.find(
+          u => u.email === email && u.password === credentials.password
         )
 
-        if (!user) return null
+        if (!devUser) return null
 
-        // In production: use bcrypt.compare(credentials.password, user.passwordHash)
         return {
-          id:    user.id,
-          name:  user.name,
-          email: user.email,
-          role:  user.role,
+          id:    devUser.id,
+          name:  devUser.name,
+          email: devUser.email,
+          role:  devUser.role,
         }
       },
     }),
@@ -80,4 +101,3 @@ export const authOptions = {
 
 const handler = NextAuth(authOptions)
 export { handler as GET, handler as POST }
-

@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
-import dbConnect from '@/lib/mongoose'
-import ScanReport from '@/models/ScanReport'
+import { db } from '@/lib/db'
 
 // ─── Pattern Libraries ────────────────────────────────────────────────────────
 
@@ -29,7 +28,7 @@ const COERCION_PATTERNS = [
 const KNOWN_LEGIT = new Set([
   'studentaid.gov','nsfgrfp.org','gates-foundation.org',
   'nationalmerit.org','rhodeshouse.ox.ac.uk',
-  'coca-colascholarsoundation.org','jacksontscharger.org',
+  'coca-colascholarsfoundation.org','jacksontscharger.org',
 ])
 
 const KNOWN_FRAUD = new Set([
@@ -55,11 +54,11 @@ function scanPatterns(text, patterns) {
 // ─── Core JS Analysis Engine ──────────────────────────────────────────────────
 
 function jsAnalyze(url, text) {
-  const hostname    = extractHostname(url || '')
-  const tld         = getTLD(hostname)
-  const hyphens     = (hostname.match(/-/g) || []).length
-  const isKnownLegit= KNOWN_LEGIT.has(hostname) || hostname.endsWith('.gov') || hostname.endsWith('.edu')
-  const isKnownFraud= KNOWN_FRAUD.has(hostname)
+  const hostname     = extractHostname(url || '')
+  const tld          = getTLD(hostname)
+  const hyphens      = (hostname.match(/-/g) || []).length
+  const isKnownLegit = KNOWN_LEGIT.has(hostname) || hostname.endsWith('.gov') || hostname.endsWith('.edu')
+  const isKnownFraud = KNOWN_FRAUD.has(hostname)
 
   let score = 0
   const flags = []
@@ -98,10 +97,10 @@ function jsAnalyze(url, text) {
       id: 'domain', label: 'Domain & WHOIS Integrity',
       status: isKnownFraud ? 'CRITICAL' : HIGH_RISK_TLDS.has(tld) ? 'CRITICAL' : hyphens >= 2 ? 'CAUTION' : 'PASS',
       rows: [
-        { label: 'Hostname',       value: hostname || '(text analysis)' },
-        { label: 'TLD',            value: tld || 'N/A',                        flag: HIGH_RISK_TLDS.has(tld) },
-        { label: 'Hyphen Count',   value: String(hyphens),                     flag: hyphens >= 2 },
-        { label: 'Registry Status',value: isKnownFraud ? 'CONFIRMED FRAUD' : isKnownLegit ? 'VERIFIED CLEAN' : 'UNVERIFIED', flag: isKnownFraud },
+        { label: 'Hostname',        value: hostname || '(text analysis)' },
+        { label: 'TLD',             value: tld || 'N/A',                        flag: HIGH_RISK_TLDS.has(tld) },
+        { label: 'Hyphen Count',    value: String(hyphens),                     flag: hyphens >= 2 },
+        { label: 'Registry Status', value: isKnownFraud ? 'CONFIRMED FRAUD' : isKnownLegit ? 'VERIFIED CLEAN' : 'UNVERIFIED', flag: isKnownFraud },
       ],
     },
     {
@@ -117,25 +116,25 @@ function jsAnalyze(url, text) {
       id: 'linguistic', label: 'Linguistic Coercion Markers',
       status: coercionHits.length >= 3 ? 'CRITICAL' : coercionHits.length > 0 ? 'CAUTION' : 'PASS',
       rows: [
-        { label: 'Coercion Markers',value: `${coercionHits.length} detected`,               flag: coercionHits.length > 0 },
-        { label: 'Terms Found',     value: coercionHits.slice(0,2).join(', ') || 'None',   flag: coercionHits.length > 0 },
-        { label: 'Coercion Index',  value: `${Math.min(100, coercionHits.length * 12)}/100` },
+        { label: 'Coercion Markers', value: `${coercionHits.length} detected`,               flag: coercionHits.length > 0 },
+        { label: 'Terms Found',      value: coercionHits.slice(0,2).join(', ') || 'None',   flag: coercionHits.length > 0 },
+        { label: 'Coercion Index',   value: `${Math.min(100, coercionHits.length * 12)}/100` },
       ],
     },
     {
       id: 'identity', label: 'Identity Harvesting Signals',
       status: (hasSSN || hasRouting) ? 'CRITICAL' : 'PASS',
       rows: [
-        { label: 'SSN Solicitation',      value: hasSSN     ? 'DETECTED' : 'Not found', flag: hasSSN },
-        { label: 'Bank Routing Request',  value: hasRouting ? 'DETECTED' : 'Not found', flag: hasRouting },
+        { label: 'SSN Solicitation',     value: hasSSN     ? 'DETECTED' : 'Not found', flag: hasSSN },
+        { label: 'Bank Routing Request', value: hasRouting ? 'DETECTED' : 'Not found', flag: hasRouting },
       ],
     },
     {
       id: 'entity', label: 'Entity & Tax Status Registry',
       status: isKnownLegit ? 'PASS' : isKnownFraud ? 'FAIL' : 'CAUTION',
       rows: [
-        { label: 'IRS 990 Match',    value: isKnownLegit ? 'Filed & Active' : 'Unverified',                                      flag: !isKnownLegit },
-        { label: 'Registry Status',  value: isKnownFraud ? 'No Records — Fraudulent' : isKnownLegit ? 'Confirmed Legitimate' : 'Requires Manual Check', flag: isKnownFraud },
+        { label: 'IRS 990 Match',   value: isKnownLegit ? 'Filed & Active' : 'Unverified',                                      flag: !isKnownLegit },
+        { label: 'Registry Status', value: isKnownFraud ? 'No Records — Fraudulent' : isKnownLegit ? 'Confirmed Legitimate' : 'Requires Manual Check', flag: isKnownFraud },
       ],
     },
     {
@@ -164,37 +163,39 @@ function jsAnalyze(url, text) {
     hasSSN,
     hasRouting,
     pillars,
-    ref:    `SG-${Date.now().toString(36).toUpperCase().slice(-8)}`,
+    ref: `SG-${Date.now().toString(36).toUpperCase().slice(-8)}`,
     engine: 'js-builtin',
     timestamp: new Date().toISOString(),
   }
 }
 
-// ─── Persist to MongoDB (non-blocking) ───────────────────────────────────────
+// ─── Persist to Prisma Database (non-blocking) ──────────────────────────────
 
 async function persistScan(result) {
+  if (!process.env.DATABASE_URL) return
+
   try {
-    await dbConnect()
-    await ScanReport.create({
-      url:          result.url,
-      hostname:     result.hostname,
-      threatIndex:  result.threatIndex,
-      status:       result.status,
-      engine:       result.engine,
-      pillars:      result.pillars,
-      flags:        result.flags,
-      feeKeywords:  result.feeKeywords,
-      coercionWords:result.coercionKeywords,
-      hasSSN:       result.hasSSN,
-      hasRouting:   result.hasRouting,
-      auditRef:     result.ref,
+    await db.scanReport.create({
+      data: {
+        url:           result.url,
+        threatIndex:   result.threatIndex,
+        status:        result.status,
+        engine:        result.engine,
+        pillars:       result.pillars,
+        flags:         result.flags,
+        feeKeywords:   result.feeKeywords,
+        coercionWords: result.coercionKeywords,
+        hasSSN:        result.hasSSN,
+        hasRouting:    result.hasRouting,
+        auditRef:      result.ref,
+      },
     })
   } catch (err) {
-    console.warn('[scan] MongoDB persist skipped:', err.message)
+    console.warn('[scan] Prisma persist skipped:', err.message)
   }
 }
 
-// ─── Route Handler ────────────────────────────────────────────────────────────
+// ─── Route Handlers ──────────────────────────────────────────────────────────
 
 export async function POST(request) {
   const body = await request.json()
@@ -232,28 +233,36 @@ export async function POST(request) {
 
   if (!result) result = jsAnalyze(url, text)
 
-  // Persist to MongoDB asynchronously
+  // Persist asynchronously
   persistScan(result).catch(() => {})
 
   return NextResponse.json(result)
 }
 
-/**
- * GET /api/scan — recent scan history
- */
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
   const limit = Math.min(50, parseInt(searchParams.get('limit') || '20'))
 
-  try {
-    await dbConnect()
-    const scans = await ScanReport.find()
-      .sort({ createdAt: -1 })
-      .limit(limit)
-      .select('url hostname threatIndex status engine auditRef createdAt')
-      .lean()
-    return NextResponse.json({ data: scans, total: scans.length, source: 'mongodb' })
-  } catch (err) {
-    return NextResponse.json({ data: [], total: 0, source: 'mock', error: err.message })
+  if (process.env.DATABASE_URL) {
+    try {
+      const scans = await db.scanReport.findMany({
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true,
+          url: true,
+          threatIndex: true,
+          status: true,
+          engine: true,
+          auditRef: true,
+          createdAt: true,
+        },
+      })
+      return NextResponse.json({ data: scans, total: scans.length, source: 'prisma' })
+    } catch (err) {
+      console.warn('[GET /api/scan] Prisma error:', err.message)
+    }
   }
+
+  return NextResponse.json({ data: [], total: 0, source: 'mock' })
 }
