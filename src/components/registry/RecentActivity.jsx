@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { ShieldCheck, AlertTriangle, ArrowRight, Radio } from 'lucide-react'
+import { ShieldCheck, AlertTriangle, ArrowRight, Activity } from 'lucide-react'
 
 const RECENT_FEED = [
   {
@@ -43,82 +43,67 @@ const RECENT_FEED = [
 
 export default function RecentActivity() {
   return (
-    <div className="mt-8 bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-5">
-      <div className="flex items-center justify-between pb-3 mb-4 border-b border-gray-100">
-        <div className="flex items-center gap-2">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-          </span>
-          <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider">Live Forensic Activity & Takedowns</h3>
+    <div className="mt-10 bg-white border border-gray-200 rounded-2xl shadow-sm p-6 sm:p-7">
+      <div className="flex items-center justify-between pb-4 mb-5 border-b border-gray-100">
+        <div className="flex items-center gap-2.5">
+          <Activity size={18} className="text-blue-700" />
+          <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Live Forensic Activity &amp; Takedowns</h3>
         </div>
         <Link
           href="/threats"
-          className="text-[11px] font-semibold text-blue-700 hover:text-blue-800 flex items-center gap-1 group"
+          className="text-xs font-semibold text-blue-700 hover:text-blue-900 flex items-center gap-1 group"
         >
-          <span>Taxonomy & Trends</span>
-          <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
+          <span>Taxonomy &amp; Trends</span>
+          <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {RECENT_FEED.map((item) => (
-          <div
-            key={item.id}
-            className="p-3 rounded-lg border border-gray-100 bg-gray-50/50 hover:bg-white hover:border-gray-200 hover:shadow-xs transition-all flex items-start gap-3"
-          >
-            <div className="mt-0.5 shrink-0">
-              {item.risk === 'critical' ? (
-                <div className="w-6 h-6 rounded-md bg-red-100 text-red-700 flex items-center justify-center">
-                  <AlertTriangle size={13} />
-                </div>
-              ) : item.risk === 'clean' ? (
-                <div className="w-6 h-6 rounded-md bg-green-100 text-green-700 flex items-center justify-center">
-                  <ShieldCheck size={13} />
-                </div>
-              ) : (
-                <div className="w-6 h-6 rounded-md bg-amber-100 text-amber-700 flex items-center justify-center">
-                  <Radio size={13} />
-                </div>
-              )}
-            </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {RECENT_FEED.map(item => {
+          const isCritical = item.risk === 'critical'
+          const isClean    = item.risk === 'clean'
+          const badgeClass = isCritical
+            ? 'bg-red-50 text-red-700 border-red-200'
+            : isClean
+            ? 'bg-blue-50 text-blue-700 border-blue-200'
+            : 'bg-yellow-50 text-yellow-800 border-yellow-200'
 
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center justify-between gap-2 mb-1">
-                <span className="text-xs font-bold text-gray-900 truncate font-mono">
+          return (
+            <div
+              key={item.id}
+              className="bg-gray-50/70 border border-gray-200/80 rounded-xl p-4 flex flex-col justify-between hover:border-gray-300 transition-colors"
+            >
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded border ${badgeClass}`}>
+                    {item.badge}
+                  </span>
+                  <span className="text-xs text-gray-500">{item.time}</span>
+                </div>
+                <div className="font-bold text-sm text-gray-900 mb-1.5 leading-snug break-words">
                   {item.title}
-                </span>
-                <span className="text-[10px] text-gray-400 shrink-0">{item.time}</span>
+                </div>
+                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed mb-3">
+                  {item.detail}
+                </p>
               </div>
-              <p className="text-[11px] text-gray-600 leading-relaxed mb-2 line-clamp-2">
-                {item.detail}
-              </p>
-              <div className="flex items-center gap-2">
-                <span
-                  className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
-                    item.risk === 'critical'
-                      ? 'bg-red-100 text-red-700'
-                      : item.risk === 'clean'
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-amber-100 text-amber-800'
-                  }`}
-                >
-                  {item.badge}
-                </span>
-                {item.risk === 'critical' && (
-                  <Link
-                    href={`/scanner?url=${encodeURIComponent('https://' + item.title)}`}
-                    className="text-[10px] text-blue-600 hover:underline font-medium"
-                  >
-                    Inspect Scan →
-                  </Link>
+
+              <div className="pt-2 border-t border-gray-200/60 flex items-center justify-between text-xs text-gray-500 font-mono">
+                <span>{item.id}</span>
+                {isCritical ? (
+                  <span className="text-red-600 font-semibold flex items-center gap-1">
+                    <AlertTriangle size={12} /> Blacklisted
+                  </span>
+                ) : (
+                  <span className="text-blue-700 font-semibold flex items-center gap-1">
+                    <ShieldCheck size={12} /> Passed
+                  </span>
                 )}
               </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )
 }
-

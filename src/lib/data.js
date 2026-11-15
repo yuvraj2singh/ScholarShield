@@ -318,7 +318,7 @@ export function threatIndexColor(n) {
   if (n >= 60) return 'bg-orange-500'
   if (n >= 40) return 'bg-yellow-500'
   if (n >= 20) return 'bg-blue-500'
-  return 'bg-green-500'
+  return 'bg-blue-700'
 }
 
 export function pillarStatusClass(s) {

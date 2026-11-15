@@ -482,12 +482,9 @@ export default function AdminClient() {
                   { label: 'Report Queue',    status: `${reports.filter(r => r.status === 'PENDING').length} pending`, ok: true },
                   { label: 'DB Backup',       status: '2h ago',               ok: true },
                 ].map(s => (
-                  <div key={s.label} className="flex items-center gap-2 p-2.5 bg-gray-50 rounded-lg">
-                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${s.ok ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
-                    <div>
-                      <div className="text-[10px] font-semibold text-gray-700">{s.label}</div>
-                      <div className="text-[9px] text-gray-500">{s.status}</div>
-                    </div>
+                  <div key={s.label} className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                    <div className="text-xs font-bold text-gray-800">{s.label}</div>
+                    <div className="text-xs text-gray-500 mt-0.5">{s.status}</div>
                   </div>
                 ))}
               </div>

@@ -1,101 +1,50 @@
 /**
- * NextAuth.js — ScholarGuard Admin Authentication
- *
- * Credentials provider:
- * 1. Queries Prisma Analyst table when DATABASE_URL is active
- * 2. Falls back to ADMIN_CREDENTIALS in development/demo mode
+ * NextAuth.js — ScholarGuard Authentication
+ * Configured for Google OAuth authorization ONLY (no credentials/passwords).
  */
 
 import NextAuth from 'next-auth'
-import CredentialsProvider from 'next-auth/providers/credentials'
-import { db } from '@/lib/db'
-
-const DEV_ADMIN_CREDENTIALS = [
-  {
-    id:       'admin-1',
-    name:     'Dr. Elena Vance, MLS',
-    email:    'admin@scholarguard.org',
-    role:     'Chief Compliance Officer',
-    avatar:   'EV',
-    password: process.env.ADMIN_PASSWORD || 'admin',
-  },
-]
+import GoogleProvider from 'next-auth/providers/google'
 
 export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET || 'scholarguard-dev-secret-change-in-production',
 
   providers: [
-    CredentialsProvider({
-      name: 'ScholarGuard Admin',
-      credentials: {
-        email:    { label: 'Email',    type: 'email' },
-        password: { label: 'Password', type: 'password' },
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null
-
-        const email = credentials.email.toLowerCase().trim()
-
-        // 1. Check Prisma database if configured
-        if (process.env.DATABASE_URL) {
-          try {
-            const analyst = await db.analyst.findUnique({
-              where: { email },
-            })
-            if (analyst) {
-              // In production: verify bcrypt hash
-              return {
-                id:    analyst.id,
-                name:  analyst.name,
-                email: analyst.email,
-                role:  analyst.role,
-              }
-            }
-          } catch (err) {
-            console.warn('[NextAuth] Prisma auth check error:', err.message)
-          }
-        }
-
-        // 2. Dev credentials fallback
-        const devUser = DEV_ADMIN_CREDENTIALS.find(
-          u => u.email === email && u.password === credentials.password
-        )
-
-        if (!devUser) return null
-
-        return {
-          id:    devUser.id,
-          name:  devUser.name,
-          email: devUser.email,
-          role:  devUser.role,
-        }
-      },
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || 'dummy-google-client-id',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'dummy-google-client-secret',
     }),
   ],
 
   session: {
     strategy: 'jwt',
-    maxAge:   8 * 60 * 60, // 8 hours
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
-        token.role = user.role
+        token.id = user.id
+        token.email = user.email
+        token.name = user.name
+        token.picture = user.image
+        token.role = 'Analyst'
       }
       return token
     },
     async session({ session, token }) {
-      if (token) {
-        session.user.role = token.role
+      if (session?.user && token) {
+        session.user.id = token.id || token.sub
+        session.user.role = token.role || 'Analyst'
+        if (token.picture) session.user.image = token.picture
       }
       return session
     },
   },
 
   pages: {
-    signIn: '/admin/login',
-    error:  '/admin/login',
+    signIn: '/login',
+    error: '/login',
   },
 }
 

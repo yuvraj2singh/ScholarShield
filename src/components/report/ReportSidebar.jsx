@@ -5,71 +5,52 @@ const STEPS = [
   {
     step: 'Step 1 — Immediate',
     title: 'Automated Sandbox Crawl',
-    desc: 'Our distributed crawler begins the final hard-coded WHOIS and similarity analysis within 2 hours. The system automatically references all existing evidence.',
+    desc: 'Our distributed crawler begins WHOIS lineage, domain age, and similarity analysis within 2 hours.',
     icon: Clock,
   },
   {
     step: 'Step 2 — 24 Hours',
     title: 'Analyst Forensic Audit',
-    desc: 'An analyst cross-checks preliminary claims, compares filings, and verifies physical address claims with state registrars.',
+    desc: 'An analyst cross-checks IRS 990 filings, physical maildrop records, and payment processor signatures.',
     icon: Shield,
   },
   {
     step: 'Step 3 — 48 Hours',
     title: 'Registry Blacklist & FTC Alert',
-    desc: 'If confirmed, we add to the cross-channel directory, update the ScholarGuard watchlist, and alert the financial aid office.',
+    desc: 'If confirmed fraudulent, the listing is blacklisted across the clearinghouse and broadcast to financial aid offices.',
     icon: Flag,
-  },
-]
-
-const TAKEDOWNS = [
-  {
-    domain: 'scholarship-national.com',
-    time: '2 hrs ago',
-    detail: 'Takedown: Application Fee ($35)',
-  },
-  {
-    domain: 'fafsa-grant-fastclaims.org',
-    time: '4 hrs ago',
-    detail: 'Juniper: including impersonation of National Scholarship Trust; 97 archived catalog...',
-  },
-  {
-    domain: 'meritaward-certificates.net',
-    time: '1 day ago',
-    detail: 'Archive: Special Security number extraction from $43 filed; 19,000+ directory to multiple reports',
   },
 ]
 
 export default function ReportSidebar() {
   return (
-    <div className="space-y-4">
-      {/* Accredited clearinghouse badge */}
-      <div className="bg-blue-700 rounded-xl p-4 text-white">
-        <div className="flex items-center gap-2 mb-2">
-          <Shield size={16} className="text-blue-200" />
-          <div className="text-xs font-bold">Accredited Clearinghouse</div>
+    <div className="space-y-6">
+      {/* Clearinghouse assurance banner */}
+      <div className="bg-blue-700 rounded-2xl p-6 text-white shadow-sm">
+        <div className="flex items-center gap-2.5 mb-2">
+          <Shield size={20} className="text-blue-200" />
+          <div className="text-base font-bold">Verified Clearinghouse</div>
         </div>
-        <div className="text-[11px] text-blue-200 leading-relaxed">
-          AAPA Endorsed · 206,841 Enc. Nominated<br />
-          All reports treated as official fraud disclosures.
+        <div className="text-sm text-blue-100 leading-relaxed">
+          All reports are treated as formal academic fraud disclosures and processed through our 6-pillar forensic pipeline.
         </div>
       </div>
 
       {/* What happens after */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
-        <div className="text-xs font-bold text-gray-900 mb-3">What Happens After You Report?</div>
-        <div className="space-y-3">
+      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
+        <div className="text-base font-bold text-gray-900 mb-4">What Happens After You Report?</div>
+        <div className="space-y-5">
           {STEPS.map((s, i) => {
             const Icon = s.icon
             return (
-              <div key={i} className="flex gap-2.5">
-                <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
-                  <Icon size={11} className="text-blue-700" />
+              <div key={i} className="flex items-start gap-3.5">
+                <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center shrink-0 mt-0.5 text-blue-700 font-bold">
+                  <Icon size={16} />
                 </div>
                 <div>
-                  <div className="text-[10px] font-bold text-blue-700 uppercase tracking-wide">{s.step}</div>
-                  <div className="text-xs font-semibold text-gray-800">{s.title}</div>
-                  <div className="text-[10px] text-gray-500 leading-relaxed">{s.desc}</div>
+                  <div className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-0.5">{s.step}</div>
+                  <div className="text-sm font-bold text-gray-900 mb-1">{s.title}</div>
+                  <div className="text-xs sm:text-sm text-gray-600 leading-relaxed">{s.desc}</div>
                 </div>
               </div>
             )
@@ -77,44 +58,25 @@ export default function ReportSidebar() {
         </div>
       </div>
 
-      {/* Recent takedowns */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
-        <div className="flex items-center justify-between mb-3">
-          <div className="text-xs font-bold text-gray-900">Recent Takedowns</div>
-          <span className="text-[10px] text-green-600 font-semibold">+1,100</span>
-        </div>
-        <div className="space-y-2.5">
-          {TAKEDOWNS.map((t, i) => (
-            <div key={i} className="border-b border-gray-100 last:border-0 pb-2.5 last:pb-0">
-              <div className="flex items-start justify-between gap-2">
-                <div className="font-mono text-[10px] text-blue-700 break-all">{t.domain}</div>
-                <div className="text-[10px] text-gray-400 shrink-0">{t.time}</div>
-              </div>
-              <div className="text-[10px] text-gray-500 leading-snug mt-0.5">{t.detail}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Immediate assistance */}
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-        <div className="text-xs font-bold text-amber-900 mb-2 flex items-center gap-1.5">
-          <Phone size={12} className="text-amber-700" />
-          Immediate Assistance
-        </div>
-        <p className="text-[10px] text-amber-800 leading-relaxed mb-2">
-          If you or a student is currently facing a live fraud attempt, contact law enforcement directly:
+      {/* Direct assistance */}
+      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
+        <div className="text-base font-bold text-gray-900 mb-2">Need Direct Counseling?</div>
+        <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+          If you or a student has already submitted banking or identity information to a suspect website:
         </p>
-        <div className="space-y-1">
-          <div className="text-[10px] font-semibold text-amber-900">Federal Student Aid — 1-800-4-FED-AID</div>
-          <Link
-            href="https://reportfraud.ftc.gov"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[10px] text-blue-700 hover:underline block font-medium"
-          >
-            FTC Fraud Reporting Portal: reportfraud.ftc.gov →
-          </Link>
+        <div className="space-y-2 text-sm text-gray-700 font-medium">
+          <div className="flex items-center gap-2">
+            <span className="text-blue-700 font-bold">1.</span>
+            <span>Contact your bank to freeze transactions</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-blue-700 font-bold">2.</span>
+            <span>Place a fraud alert on credit bureaus</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-blue-700 font-bold">3.</span>
+            <span>File an identity theft report at IdentityTheft.gov</span>
+          </div>
         </div>
       </div>
     </div>

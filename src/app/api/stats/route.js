@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { SCHOLARSHIPS, STATS } from '@/lib/data'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * GET /api/stats
  * Telemetry pulse: indexed, verified, flagged, and report stats.
@@ -65,6 +67,7 @@ export async function GET() {
   const flagged  = SCHOLARSHIPS.filter(s => ['SUSPICIOUS', 'HIGH_RISK', 'FRAUD', 'CAUTION'].includes(s.status)).length
   const fraud    = SCHOLARSHIPS.filter(s => s.status === 'FRAUD').length
   const highRisk = SCHOLARSHIPS.filter(s => s.status === 'HIGH_RISK').length
+  const reportsSubmitted = STATS.counselorTips || 84
 
   return NextResponse.json({
     totalScholarships: SCHOLARSHIPS.length,
@@ -72,8 +75,8 @@ export async function GET() {
     flaggedCount:      flagged,
     fraudCount:        fraud,
     highRiskCount:     highRisk,
-    totalReports:      STATS.reportsSubmitted,
-    pendingReports:    Math.floor(STATS.reportsSubmitted * 0.3),
+    totalReports:      reportsSubmitted,
+    pendingReports:    Math.floor(reportsSubmitted * 0.3),
     totalScans:        14,
     recentReports:     [],
     source:            'mock',

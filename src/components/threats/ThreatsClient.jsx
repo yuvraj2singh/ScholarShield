@@ -45,21 +45,21 @@ const QUIZ = [
 
 function PatternCard({ p, isOpen, toggle }) {
   return (
-    <div className={`border rounded-xl mb-3 overflow-hidden ${p.color}`}>
-      <button onClick={toggle} className="w-full text-left px-5 py-4 flex items-start justify-between gap-3">
-        <div className="flex items-start gap-3">
-          <span className={`${p.badgeColor} text-white text-[10px] font-bold px-2 py-0.5 rounded shrink-0 mt-0.5`}>{p.num}</span>
+    <div className={`border rounded-2xl mb-4 overflow-hidden ${p.color}`}>
+      <button onClick={toggle} className="w-full text-left px-6 py-5 flex items-start justify-between gap-3">
+        <div className="flex items-start gap-3.5">
+          <span className={`${p.badgeColor} text-white text-xs font-bold px-2.5 py-1 rounded-md shrink-0 mt-0.5`}>{p.num}</span>
           <div>
-            <div className="text-sm font-bold text-gray-900 leading-snug mb-0.5">{p.title}</div>
-            <div className="text-[11px] text-gray-500">{p.sub}</div>
+            <div className="text-base font-bold text-gray-900 leading-snug mb-1">{p.title}</div>
+            <div className="text-xs text-gray-500">{p.sub}</div>
           </div>
         </div>
-        {isOpen ? <ChevronUp size={16} className="text-gray-500 shrink-0 mt-1" /> : <ChevronDown size={16} className="text-gray-500 shrink-0 mt-1" />}
+        {isOpen ? <ChevronUp size={18} className="text-gray-500 shrink-0 mt-1" /> : <ChevronDown size={18} className="text-gray-500 shrink-0 mt-1" />}
       </button>
 
       {isOpen && (
-        <div className="px-5 pb-5 border-t border-black/5">
-          <p className="text-xs text-gray-700 leading-relaxed mt-4 mb-4">{p.desc}</p>
+        <div className="px-6 pb-6 border-t border-black/5">
+          <p className="text-sm text-gray-700 leading-relaxed mt-4 mb-5">{p.desc}</p>
 
           {p.examples && (
             <div>
@@ -237,44 +237,44 @@ export default function ThreatsClient() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
         {/* Line chart */}
         <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl shadow-sm p-5">
-          <div className="text-xs font-bold text-gray-900 mb-1">Monthly Flagging Activity</div>
-          <div className="text-[10px] text-gray-500 mb-4">Flagged vs. Verified scholarships processed per month (2025)</div>
-          <ResponsiveContainer width="100%" height={200}>
+          <div className="text-sm font-bold text-gray-900 mb-1">Monthly Flagging Activity</div>
+          <div className="text-xs text-gray-500 mb-4">Flagged vs. Verified scholarships processed per month (2025)</div>
+          <ResponsiveContainer width="100%" height={220}>
             <LineChart data={MONTHLY_DATA}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
-              <XAxis dataKey="month" tick={{ fontSize: 10 }} />
-              <YAxis tick={{ fontSize: 10 }} />
+              <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 12 }} />
               <Tooltip
                 formatter={(value, name) => [value, name === 'flagged' ? 'Flagged Scholarships' : 'Verified Scholarships']}
                 labelFormatter={(label) => `Month: ${label}`}
-                contentStyle={{ fontSize: 11, borderRadius: 8, borderColor: '#e5e7eb', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}
+                contentStyle={{ fontSize: 12, borderRadius: 10, borderColor: '#e5e7eb', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}
               />
-              <Line type="monotone" dataKey="flagged"   stroke="#dc2626" strokeWidth={2} dot={false} name="Flagged" />
-              <Line type="monotone" dataKey="verified"  stroke="#16a34a" strokeWidth={2} dot={false} name="Verified" />
+              <Line type="monotone" dataKey="flagged"   stroke="#dc2626" strokeWidth={2.5} dot={false} name="Flagged" />
+              <Line type="monotone" dataKey="verified"  stroke="#2563eb" strokeWidth={2.5} dot={false} name="Verified" />
             </LineChart>
           </ResponsiveContainer>
         </div>
 
         {/* Pie chart */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-5">
-          <div className="text-xs font-bold text-gray-900 mb-1">Threat Vector Breakdown</div>
-          <div className="text-[10px] text-gray-500 mb-4">Distribution of scam tactics detected</div>
-          <ResponsiveContainer width="100%" height={160}>
+        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
+          <div className="text-sm font-bold text-gray-900 mb-1">Threat Vector Breakdown</div>
+          <div className="text-xs text-gray-500 mb-4">Distribution of scam tactics detected</div>
+          <ResponsiveContainer width="100%" height={170}>
             <PieChart>
-              <Pie data={VECTOR_BREAKDOWN} cx="50%" cy="50%" innerRadius={40} outerRadius={65} paddingAngle={2} dataKey="value">
+              <Pie data={VECTOR_BREAKDOWN} cx="50%" cy="50%" innerRadius={42} outerRadius={68} paddingAngle={2} dataKey="value">
                 {VECTOR_BREAKDOWN.map((entry, i) => <Cell key={i} fill={entry.color} />)}
               </Pie>
-              <Tooltip formatter={(v) => [`${v}%`, '']} contentStyle={{ fontSize: 11 }} />
+              <Tooltip formatter={(v) => [`${v}%`, '']} contentStyle={{ fontSize: 12 }} />
             </PieChart>
           </ResponsiveContainer>
-          <div className="space-y-1.5 mt-2">
+          <div className="space-y-2 mt-3">
             {VECTOR_BREAKDOWN.map((item, i) => (
-              <div key={i} className="flex items-center justify-between text-[10px]">
-                <div className="flex items-center gap-1.5">
+              <div key={i} className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2">
                   <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
-                  <span className="text-gray-700">{item.name}</span>
+                  <span className="text-gray-700 font-medium">{item.name}</span>
                 </div>
-                <span className="font-semibold text-gray-900">{item.value}%</span>
+                <span className="font-bold text-gray-900">{item.value}%</span>
               </div>
             ))}
           </div>
@@ -282,9 +282,9 @@ export default function ThreatsClient() {
       </div>
 
       {/* Pattern accordion */}
-      <div className="mb-8">
-        <h2 className="text-lg font-bold text-gray-900 mb-1">The 5 Core Deception Patterns</h2>
-        <p className="text-xs text-gray-500 mb-5 leading-relaxed">
+      <div className="mb-10">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">The 5 Core Deception Patterns</h2>
+        <p className="text-sm sm:text-base text-gray-600 mb-6 leading-relaxed">
           A comprehensive threat classification of predatory scholarship mechanics, attack taxonomies, and the linguistic and technical deception playbooks that separate genuine academic endowments from predatory lookalike schemes.
         </p>
         {THREAT_PATTERNS.map(p => (
@@ -298,24 +298,24 @@ export default function ThreatsClient() {
       </div>
 
       {/* PDF download banner */}
-      <div className="bg-blue-700 rounded-xl p-6 mb-8 flex items-center justify-between gap-4 flex-wrap">
+      <div className="bg-blue-700 rounded-2xl p-7 mb-10 flex items-center justify-between gap-5 flex-wrap">
         <div>
-          <div className="text-[10px] font-bold text-blue-200 uppercase tracking-wide mb-1">In-Class Resource</div>
-          <div className="text-sm font-bold text-white mb-1">Student &amp; Counselor Defense Checklist (The 7 Golden Rules)</div>
-          <div className="text-xs text-blue-200 leading-relaxed max-w-lg">
+          <div className="text-xs font-bold text-blue-200 uppercase tracking-wider mb-1">In-Class Resource</div>
+          <div className="text-base sm:text-lg font-bold text-white mb-1.5">Student &amp; Counselor Defense Checklist (The 7 Golden Rules)</div>
+          <div className="text-sm text-blue-100 leading-relaxed max-w-xl">
             A one-page high school student or adult-formatted checklist for high school or first-year college students. This can be used directly in class and is printed across 400 participating ScholarGuard university-party domains.
           </div>
         </div>
-        <button className="inline-flex items-center gap-1.5 bg-white hover:bg-blue-50 text-blue-700 text-xs font-bold px-4 py-2.5 rounded-lg transition-colors shrink-0">
-          <Download size={13} /> Download Free PDF
+        <button className="inline-flex items-center gap-2 bg-white hover:bg-blue-50 text-blue-700 text-sm font-bold px-5 py-3 rounded-xl transition-colors shrink-0 shadow-sm">
+          <Download size={16} /> Download Free PDF
         </button>
       </div>
 
       {/* Quiz */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-5">
-        <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Interactive Assessment</div>
-        <h2 className="text-lg font-bold text-gray-900 mb-1">Test Your Detection Skills: Real vs. Deceptive</h2>
-        <p className="text-xs text-gray-500 mb-5">Can you identify the hallmarks of a scholarship scam? Take this 3-question quiz to find out.</p>
+      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 sm:p-8">
+        <div className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Interactive Assessment</div>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Test Your Detection Skills: Real vs. Deceptive</h2>
+        <p className="text-sm sm:text-base text-gray-600 mb-6">Can you identify the hallmarks of a scholarship scam? Take this 3-question quiz to find out.</p>
         <QuizSection />
       </div>
     </div>

@@ -9,14 +9,19 @@ const KNOWN = {
     label: 'Federal Government .gov Domain',
     desc: 'Official U.S. Department of Education Federal Student Aid portal. Highest possible trust level.',
   },
-  'coca-colascholars foundation.org': {
+  'coca-colascholarsfoundation.org': {
     score: 1, status: 'VERIFIED',
     label: 'Gold Standard — Est. 1986',
     desc: 'The Coca-Cola Scholars Foundation has operated since 1986 with full IRS 501(c)(3) status and no application fees.',
   },
+  'gatesfoundation.org': {
+    score: 0, status: 'VERIFIED',
+    label: 'Bill & Melinda Gates Foundation',
+    desc: 'Established 1994. Full IRS verification, .org domain registered 26 years ago. Zero fees required.',
+  },
   'gates-foundation.org': {
     score: 2, status: 'VERIFIED',
-    label: 'Bill & Melinda Gates Foundation',
+    label: 'Bill & Melinda Gates Foundation (Legacy Domain)',
     desc: 'Established 1994. Full IRS verification, .org domain registered 26 years ago. Zero fees required.',
   },
   'nsfgrfp.org': {
@@ -54,32 +59,32 @@ const SAMPLE_URLS = [
 ]
 
 const WHAT_WE_CHECK = [
-  { label: 'Domain Age & WHOIS',      desc: 'Checks registration date, registrar, and privacy shields' },
-  { label: 'TLD Risk Score',          desc: 'Flags .info, .biz, .net used for academic orgs' },
-  { label: 'IRS 990 Database',        desc: 'Cross-references nonprofit filings and registration' },
-  { label: 'Fee Keyword Detection',   desc: 'Scans for payment language in solicitations' },
-  { label: 'Homoglyph Analysis',      desc: 'Detects character substitution attacks (rn→m, etc.)' },
-  { label: 'Plagiarism Hash',         desc: 'Compares content against 1.4M indexed signatures' },
+  { label: 'Domain Age & WHOIS',      desc: 'Checks registration date, registrar lineage, and privacy proxy shields' },
+  { label: 'TLD Risk Scoring',        desc: 'Flags high-risk and commercial TLDs used for fake academic foundations' },
+  { label: 'IRS 990 Database',        desc: 'Cross-references 501(c)(3) nonprofit tax filings and public charity records' },
+  { label: 'Fee Extraction Radar',    desc: 'Scans for prohibited advance processing, courier, or registration charges' },
+  { label: 'Homoglyph Analysis',      desc: 'Detects lookalike character substitution attacks (rn → m, 0 → o, etc.)' },
+  { label: 'Credential Harvesting',   desc: 'Alerts if application forms request SSN, banking PIN, or FAFSA logins' },
 ]
 
 function ScoreBar({ score, status }) {
   const color =
-    status === 'VERIFIED'  ? 'bg-green-500' :
+    status === 'VERIFIED'  ? 'bg-blue-600' :
     status === 'FRAUD'     ? 'bg-red-600' :
     status === 'HIGH_RISK' ? 'bg-orange-500' :
                              'bg-yellow-500'
   const textColor =
-    status === 'VERIFIED'  ? 'text-green-700' :
+    status === 'VERIFIED'  ? 'text-blue-700' :
     status === 'FRAUD'     ? 'text-red-700' :
     status === 'HIGH_RISK' ? 'text-orange-700' :
                              'text-yellow-700'
   return (
     <div>
-      <div className="flex items-center justify-between mb-1.5">
-        <span className="text-[10px] text-gray-500 font-semibold uppercase tracking-wide">Risk Score</span>
-        <span className={`text-sm font-bold tabular-nums ${textColor}`}>{score}/100</span>
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-xs text-gray-500 font-bold uppercase tracking-wider">Composite Risk Index</span>
+        <span className={`text-base font-extrabold tabular-nums ${textColor}`}>{score}/100</span>
       </div>
-      <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+      <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
         <div
           className={`h-full ${color} rounded-full transition-all duration-700`}
           style={{ width: `${Math.max(score, 2)}%` }}
@@ -98,7 +103,7 @@ export default function VerifyClient() {
     if (!url.trim()) return
     setLoading(true)
     setResult(null)
-    await new Promise(r => setTimeout(r, 900))
+    await new Promise(r => setTimeout(r, 600))
 
     const clean = url.replace(/^https?:\/\//, '').replace(/\/$/, '')
     const known = KNOWN[clean]
@@ -116,16 +121,16 @@ export default function VerifyClient() {
           url: url.trim(),
           score: data.threatIndex ?? data.threat ?? 50,
           status: data.status || 'SUSPICIOUS',
-          label: data.status === 'VERIFIED' ? 'Verified Legitimate' : 'Forensic Scan Alert',
-          desc: `Threat index: ${data.threatIndex ?? data.threat ?? 50}/100. ${data.flags?.join('. ') || `${data.pillars?.length || 0} diagnostic pillars analyzed.`}`,
+          label: data.status === 'VERIFIED' ? 'Verified Legitimate Program' : 'Forensic Security Alert',
+          desc: `Threat score: ${data.threatIndex ?? data.threat ?? 50}/100. ${data.flags?.join('. ') || `${data.pillars?.length || 0} diagnostic security pillars analyzed.`}`,
         })
       } catch {
         setResult({
           url: url.trim(),
           score: 50,
           status: 'SUSPICIOUS',
-          label: 'Unknown Domain',
-          desc: 'This URL is not in our database. Exercise caution and verify through official university channels.',
+          label: 'Unindexed Domain',
+          desc: 'This URL is not yet indexed in our clearinghouse. Exercise caution and verify through your campus financial aid office.',
         })
       }
     }
@@ -133,45 +138,45 @@ export default function VerifyClient() {
   }
 
   const STATUS_CFG = {
-    VERIFIED:  { icon: CheckCircle,  bg: 'border-green-200 bg-green-50',  iconBg: 'bg-green-100',  iconColor: 'text-green-600',  textColor: 'text-green-800',  badgeBg: 'bg-green-100 text-green-700 border-green-300' },
-    FRAUD:     { icon: XCircle,      bg: 'border-red-200 bg-red-50',      iconBg: 'bg-red-100',    iconColor: 'text-red-600',    textColor: 'text-red-800',    badgeBg: 'bg-red-100 text-red-700 border-red-300' },
-    HIGH_RISK: { icon: AlertTriangle,bg: 'border-orange-200 bg-orange-50',iconBg: 'bg-orange-100', iconColor: 'text-orange-600', textColor: 'text-orange-800', badgeBg: 'bg-orange-100 text-orange-700 border-orange-300' },
-    SUSPICIOUS:{ icon: AlertTriangle,bg: 'border-yellow-200 bg-yellow-50',iconBg: 'bg-yellow-100', iconColor: 'text-yellow-600', textColor: 'text-yellow-800', badgeBg: 'bg-yellow-100 text-yellow-700 border-yellow-300' },
+    VERIFIED:  { icon: CheckCircle,  bg: 'border-blue-200 bg-blue-50/60',  iconBg: 'bg-blue-100',  iconColor: 'text-blue-700',  textColor: 'text-blue-900',  badgeBg: 'bg-blue-100 text-blue-800 border-blue-300' },
+    FRAUD:     { icon: XCircle,      bg: 'border-red-200 bg-red-50/60',      iconBg: 'bg-red-100',    iconColor: 'text-red-600',    textColor: 'text-red-900',    badgeBg: 'bg-red-100 text-red-800 border-red-300' },
+    HIGH_RISK: { icon: AlertTriangle,bg: 'border-orange-200 bg-orange-50/60',iconBg: 'bg-orange-100', iconColor: 'text-orange-600', textColor: 'text-orange-900', badgeBg: 'bg-orange-100 text-orange-800 border-orange-300' },
+    SUSPICIOUS:{ icon: AlertTriangle,bg: 'border-yellow-200 bg-yellow-50/60',iconBg: 'bg-yellow-100', iconColor: 'text-yellow-600', textColor: 'text-yellow-900', badgeBg: 'bg-yellow-100 text-yellow-800 border-yellow-300' },
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Search input */}
-      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
-        <div className="flex gap-2">
+      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 sm:p-8">
+        <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               value={url}
               onChange={e => setUrl(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && verify()}
               placeholder="https://scholarship-website.org/apply"
-              className="w-full pl-10 pr-3 py-3 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white font-mono placeholder:font-sans placeholder-gray-400"
+              className="w-full pl-11 pr-4 py-3.5 text-base border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white font-mono placeholder:font-sans placeholder-gray-400 shadow-sm"
             />
           </div>
           <button
             onClick={verify}
             disabled={loading || !url.trim()}
-            className="inline-flex items-center gap-1.5 bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold px-5 py-3 rounded-xl transition-colors disabled:opacity-50 shrink-0"
+            className="inline-flex items-center justify-center gap-2 bg-blue-700 hover:bg-blue-800 text-white text-base font-semibold px-7 py-3.5 rounded-xl transition-colors disabled:opacity-50 shrink-0 shadow-sm"
           >
-            {loading ? <Loader2 size={14} className="animate-spin" /> : <Shield size={14} />}
-            {loading ? 'Checking…' : 'Verify Now'}
+            {loading ? <Loader2 size={16} className="animate-spin" /> : <Shield size={16} />}
+            <span>{loading ? 'Checking…' : 'Verify Link'}</span>
           </button>
         </div>
 
         {/* Sample URLs */}
-        <div className="mt-3 flex flex-wrap gap-2 items-center">
-          <span className="text-[10px] text-gray-400 font-semibold">Try a sample:</span>
+        <div className="mt-4 flex flex-wrap gap-2 items-center">
+          <span className="text-xs text-gray-500 font-semibold">Try a verified sample:</span>
           {SAMPLE_URLS.map(u => (
             <button
               key={u}
               onClick={() => { setUrl(u); setResult(null) }}
-              className="text-[10px] text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-2 py-0.5 rounded font-mono transition-colors"
+              className="text-xs text-blue-700 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-3 py-1 rounded-lg font-mono transition-colors"
             >
               {u.replace('https://', '')}
             </button>
@@ -184,35 +189,36 @@ export default function VerifyClient() {
         const cfg = STATUS_CFG[result.status] || STATUS_CFG.SUSPICIOUS
         const Icon = cfg.icon
         return (
-          <div className={`border-2 rounded-2xl p-6 fade-in ${cfg.bg}`}>
-            <div className="flex items-start gap-4 mb-5">
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${cfg.iconBg}`}>
-                <Icon size={22} className={cfg.iconColor} />
+          <div className={`border-2 rounded-2xl p-6 sm:p-8 fade-in ${cfg.bg}`}>
+            <div className="flex items-start gap-4 mb-6">
+              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ${cfg.iconBg} shadow-sm`}>
+                <Icon size={28} className={cfg.iconColor} />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap mb-1">
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${cfg.badgeBg}`}>
+                <div className="flex items-center gap-2 flex-wrap mb-2">
+                  <span className={`text-xs font-bold px-3 py-1 rounded-md border ${cfg.badgeBg}`}>
                     {result.status.replace('_', ' ')}
                   </span>
                 </div>
-                <div className="font-mono text-sm text-gray-800 break-all mb-1">{result.url}</div>
-                <div className={`text-xs font-semibold ${cfg.textColor} mb-1`}>{result.label}</div>
-                <div className="text-xs text-gray-600 leading-relaxed">{result.desc}</div>
+                <div className="font-mono text-base font-bold text-gray-900 break-all mb-1">{result.url}</div>
+                <div className={`text-sm font-bold ${cfg.textColor} mb-2`}>{result.label}</div>
+                <div className="text-sm text-gray-700 leading-relaxed">{result.desc}</div>
               </div>
             </div>
 
             <ScoreBar score={result.score} status={result.status} />
 
-            <div className="mt-5 flex gap-2 flex-wrap">
+            <div className="mt-6 pt-5 border-t border-black/5 flex gap-3 flex-wrap">
               <Link
                 href={`/scanner?url=${encodeURIComponent(result.url)}`}
-                className="inline-flex items-center gap-1.5 bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors"
+                className="inline-flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors shadow-sm"
               >
-                Full Forensic Audit <ChevronRight size={12} />
+                <span>Full Forensic Audit</span>
+                <ChevronRight size={14} />
               </Link>
               <Link
                 href="/report"
-                className="inline-flex items-center gap-1.5 border border-gray-300 hover:border-gray-400 text-gray-700 text-xs font-medium px-3 py-2 rounded-lg transition-colors bg-white"
+                className="inline-flex items-center gap-1.5 border border-gray-300 hover:border-gray-400 text-gray-800 text-sm font-medium px-4 py-2.5 rounded-xl transition-colors bg-white shadow-sm"
               >
                 Report This Domain
               </Link>
@@ -222,17 +228,17 @@ export default function VerifyClient() {
       })()}
 
       {/* What we check */}
-      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
-        <h2 className="text-sm font-bold text-gray-900 mb-4">What We Check</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 sm:p-8">
+        <h2 className="text-lg font-bold text-gray-900 mb-5">What ScholarGuard Checks</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {WHAT_WE_CHECK.map((item, i) => (
-            <div key={i} className="flex items-start gap-2.5">
-              <div className="w-5 h-5 rounded bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
-                <Shield size={10} className="text-blue-700" />
+            <div key={i} className="flex items-start gap-3">
+              <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center shrink-0 mt-0.5 text-blue-700">
+                <Shield size={14} />
               </div>
               <div>
-                <div className="text-xs font-semibold text-gray-800">{item.label}</div>
-                <div className="text-[11px] text-gray-500">{item.desc}</div>
+                <div className="text-sm font-bold text-gray-800 mb-0.5">{item.label}</div>
+                <div className="text-xs text-gray-600 leading-relaxed">{item.desc}</div>
               </div>
             </div>
           ))}
