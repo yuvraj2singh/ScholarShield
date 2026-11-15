@@ -69,7 +69,7 @@ export async function POST(request) {
           scholarshipName: body.scholarshipName,
           orgName:         body.orgName,
           url:             body.url || null,
-          channel:         body.channel || 'Unknown',
+          channel:         body.discoveryChannel || body.channel || 'Unknown',
           indicators:      body.indicators || [],
           amount:          body.amount ? parseFloat(body.amount) : null,
           paymentMethod:   body.paymentMethod || null,

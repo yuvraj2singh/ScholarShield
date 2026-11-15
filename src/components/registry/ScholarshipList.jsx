@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { CheckCircle, XCircle, AlertTriangle, Info, ExternalLink, ChevronRight, Flag, Eye } from 'lucide-react'
 import { SCHOLARSHIPS, threatColor, cardBorder } from '@/lib/data'
 
@@ -133,9 +133,33 @@ export default function ScholarshipList({ filters = {} }) {
   const { q = '', status = 'all', risk = 'all' } = filters
   const [page, setPage] = useState(1)
   const [perPage, setPerPage] = useState(5)
+  const [scholarships, setScholarships] = useState(SCHOLARSHIPS)
+
+  useEffect(() => {
+    fetch('/api/scholarships?limit=50')
+      .then(res => res.ok ? res.json() : null)
+      .then(res => {
+        if (res?.data?.length > 0) {
+          setScholarships(res.data.map(s => ({
+            id: s.id,
+            name: s.name,
+            org: s.org,
+            url: s.url,
+            award: s.award,
+            status: s.status,
+            threat: s.threatIndex ?? s.threat ?? 0,
+            irs: s.irsCompliant ?? s.irs ?? false,
+            domain: s.domain || 'Verified',
+            date: s.createdAt ? new Date(s.createdAt).toISOString().slice(0, 10) : (s.date || '2025-02-20'),
+            notes: s.notes || [],
+          })))
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   const filtered = useMemo(() => {
-    return SCHOLARSHIPS.filter(s => {
+    return scholarships.filter(s => {
       // Text search
       if (q) {
         const lq = q.toLowerCase()
@@ -154,7 +178,7 @@ export default function ScholarshipList({ filters = {} }) {
       }
       return true
     })
-  }, [q, status, risk])
+  }, [q, status, risk, scholarships])
 
   // Reset to page 1 when filters change
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage))
@@ -179,8 +203,8 @@ export default function ScholarshipList({ filters = {} }) {
         <div className="text-xs text-gray-500">
           Showing <span className="font-semibold text-gray-900">{pageItems.length}</span> of{' '}
           <span className="font-semibold text-gray-900">{filtered.length}</span> results
-          {filtered.length !== SCHOLARSHIPS.length && (
-            <span className="text-gray-400"> (filtered from {SCHOLARSHIPS.length})</span>
+          {filtered.length !== scholarships.length && (
+            <span className="text-gray-400"> (filtered from {scholarships.length})</span>
           )}
         </div>
         <select
@@ -190,7 +214,7 @@ export default function ScholarshipList({ filters = {} }) {
         >
           <option value={5}>5 per page</option>
           <option value={10}>10 per page</option>
-          <option value={SCHOLARSHIPS.length}>All results</option>
+          <option value={scholarships.length}>All results</option>
         </select>
       </div>
 

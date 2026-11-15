@@ -114,10 +114,10 @@ export default function VerifyClient() {
         const data = await res.json()
         setResult({
           url: url.trim(),
-          score: data.threat || 50,
+          score: data.threatIndex ?? data.threat ?? 50,
           status: data.status || 'SUSPICIOUS',
-          label: 'Scan Result',
-          desc: `Threat index: ${data.threat}/100. ${data.pillars?.length || 0} pillars analyzed.`,
+          label: data.status === 'VERIFIED' ? 'Verified Legitimate' : 'Forensic Scan Alert',
+          desc: `Threat index: ${data.threatIndex ?? data.threat ?? 50}/100. ${data.flags?.join('. ') || `${data.pillars?.length || 0} diagnostic pillars analyzed.`}`,
         })
       } catch {
         setResult({

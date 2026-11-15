@@ -1,17 +1,10 @@
 'use client'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Download, ExternalLink, Flag, Search, ChevronDown, CheckCircle, XCircle, AlertTriangle, Eye } from 'lucide-react'
 import Link from 'next/link'
 import { SCHOLARSHIPS, threatIndexColor, threatColor } from '@/lib/data'
 
 const TABS = ['All Records', 'Blacklisted', 'Watchlist', 'Cleared']
-
-function tabCount(t) {
-  if (t === 'Blacklisted') return SCHOLARSHIPS.filter(s => s.status === 'FRAUD').length
-  if (t === 'Watchlist')   return SCHOLARSHIPS.filter(s => s.status === 'HIGH_RISK' || s.status === 'SUSPICIOUS').length
-  if (t === 'Cleared')     return SCHOLARSHIPS.filter(s => s.status === 'VERIFIED').length
-  return SCHOLARSHIPS.length
-}
 
 function exportCSV(data) {
   const headers = ['ID', 'Name', 'Organization', 'URL', 'Award', 'Status', 'Threat Index', 'IRS 990', 'Domain Age', 'Date']
@@ -28,9 +21,40 @@ function exportCSV(data) {
 }
 
 export default function RegistryClient() {
-  const [tab, setTab]     = useState('All Records')
-  const [q, setQ]         = useState('')
-  const [toast, setToast] = useState(null)
+  const [tab, setTab]         = useState('All Records')
+  const [q, setQ]             = useState('')
+  const [toast, setToast]     = useState(null)
+  const [records, setRecords] = useState(SCHOLARSHIPS)
+
+  useEffect(() => {
+    fetch('/api/scholarships?limit=50')
+      .then(res => res.ok ? res.json() : null)
+      .then(res => {
+        if (res?.data?.length > 0) {
+          setRecords(res.data.map(s => ({
+            id: s.id,
+            name: s.name,
+            org: s.org,
+            url: s.url,
+            award: s.award,
+            status: s.status,
+            threat: s.threatIndex ?? s.threat ?? 0,
+            irs: s.irsCompliant ?? s.irs ?? false,
+            domain: s.domain || 'Verified',
+            date: s.createdAt ? new Date(s.createdAt).toISOString().slice(0, 10) : (s.date || '2025-02-20'),
+            notes: s.notes || [],
+          })))
+        }
+      })
+      .catch(() => {})
+  }, [])
+
+  function tabCount(t) {
+    if (t === 'Blacklisted') return records.filter(s => s.status === 'FRAUD').length
+    if (t === 'Watchlist')   return records.filter(s => s.status === 'HIGH_RISK' || s.status === 'SUSPICIOUS').length
+    if (t === 'Cleared')     return records.filter(s => s.status === 'VERIFIED').length
+    return records.length
+  }
 
   function showToast(msg, type = 'success') {
     setToast({ msg, type })
@@ -38,7 +62,7 @@ export default function RegistryClient() {
   }
 
   const filtered = useMemo(() => {
-    let data = SCHOLARSHIPS
+    let data = records
     if (tab === 'Blacklisted') data = data.filter(s => s.status === 'FRAUD')
     if (tab === 'Watchlist')   data = data.filter(s => s.status === 'HIGH_RISK' || s.status === 'SUSPICIOUS')
     if (tab === 'Cleared')     data = data.filter(s => s.status === 'VERIFIED')
@@ -51,15 +75,32 @@ export default function RegistryClient() {
       )
     }
     return data
-  }, [tab, q])
+  }, [tab, q, records])
 
   function handleExport() {
     exportCSV(filtered)
     showToast(`Exported ${filtered.length} records as CSV`)
   }
 
-  function handleFlag(s) {
+  async function handleFlag(s) {
     showToast(`Flagged "${s.name}" for analyst review`, 'warning')
+    try {
+      await fetch('/api/report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          scholarshipName: s.name,
+          orgName: s.org,
+          url: s.url,
+          channel: 'Public Registry User Flag',
+          indicators: ['Community Flagged via Registry'],
+          submitterRole: 'Student / User',
+          anonymous: true,
+        }),
+      })
+    } catch (e) {
+      console.warn('Flag API error:', e)
+    }
   }
 
   return (
