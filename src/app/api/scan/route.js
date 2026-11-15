@@ -6,7 +6,7 @@ import { db } from '@/lib/db'
 const HIGH_RISK_TLDS = new Set([
   '.biz','.info','.cc','.tk','.ml','.ga','.cf','.gq',
   '.top','.xyz','.click','.link','.loan','.win','.online',
-  '.site','.website','.club','.icu','.buzz',
+  '.site','.website','.club','.icu','.buzz','.work',
 ])
 
 const FEE_PATTERNS = [
@@ -14,7 +14,7 @@ const FEE_PATTERNS = [
   /registration\s+fee/i, /handling\s+fee/i, /application\s+fee/i,
   /administrative\s+fee/i, /activation\s+fee/i, /deposit\s+required/i,
   /pay.*before.*receiv/i, /wire\s+transfer/i, /upfront\s+payment/i,
-  /advance\s+payment/i, /send\s+money/i,
+  /advance\s+payment/i, /send\s+money/i, /disbursement\s+fee/i,
 ]
 
 const COERCION_PATTERNS = [
@@ -26,14 +26,15 @@ const COERCION_PATTERNS = [
 ]
 
 const KNOWN_LEGIT = new Set([
-  'studentaid.gov','nsfgrfp.org','gates-foundation.org',
+  'studentaid.gov','nsfgrfp.org','gatesfoundation.org','gates-foundation.org',
   'nationalmerit.org','rhodeshouse.ox.ac.uk',
-  'coca-colascholarsfoundation.org','jacksontscharger.org',
+  'coca-colascholarsfoundation.org','jacksontscharger.org','fulbrightprogram.org',
 ])
 
 const KNOWN_FRAUD = new Set([
   'national-meritscholars-portal.org','american-opportunity-grants.net',
   'quantumleap-edu-scholarship.info','ivy-ivyleague-fellowship.net',
+  'scholars-awards.ac',
 ])
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -155,6 +156,7 @@ function jsAnalyze(url, text) {
     url: url || '(text analysis)',
     hostname,
     threatIndex: score,
+    threat: score,
     status,
     critical, caution, cleared,
     flags,
@@ -207,28 +209,102 @@ export async function POST(request) {
 
   let result = null
 
-  // Try Python FastAPI engine first
+  // Try Python FastAPI engine with 7500ms timeout for live WHOIS + crawl
   const engineUrl = process.env.ANALYSIS_ENGINE_URL || 'http://localhost:8000'
   try {
     const pyRes = await fetch(`${engineUrl}/analyze/url`, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({ url: url || '', text: text || '' }),
-      signal:  AbortSignal.timeout(3000),
+      signal:  AbortSignal.timeout(7500),
     })
+
     if (pyRes.ok) {
       const pyData = await pyRes.json()
       const jsData = jsAnalyze(url, text)
+
+      // Merge and enrich diagnostic pillars
+      const enrichedPillars = jsData.pillars.map(pillar => {
+        const p = { ...pillar, rows: [...pillar.rows] }
+
+        // Pillar 1: Domain & WHOIS Integrity
+        if (p.id === 'domain' && pyData.whois?.success) {
+          const age = pyData.whois.domainAgeDays
+          if (age !== null && age !== undefined) {
+            const isYoung = age < 180
+            p.rows.push({
+              label: 'Domain Age',
+              value: `${age} Days ${age < 60 ? '(Critical Risk < 60d)' : isYoung ? '(Probationary < 180d)' : '(Established)'}`,
+              flag: isYoung,
+            })
+            if (age < 60) p.status = 'CRITICAL'
+            else if (isYoung && p.status !== 'CRITICAL') p.status = 'CAUTION'
+          }
+          if (pyData.whois.registrar) {
+            p.rows.push({
+              label: 'WHOIS Registrar',
+              value: String(pyData.whois.registrar).slice(0, 32),
+              flag: false,
+            })
+          }
+          if (pyData.whois.privacyShield !== undefined) {
+            p.rows.push({
+              label: 'Privacy Proxy',
+              value: pyData.whois.privacyShield ? 'Active Shield (Proxy / Redacted)' : 'Public / Standard Registry',
+              flag: Boolean(pyData.whois.privacyShield && (age !== null && age < 180)),
+            })
+          }
+        }
+
+        // Pillar 2: Financial Extraction Demand
+        if (p.id === 'financial' && pyData.crawl?.paymentSignals?.length > 0) {
+          p.status = 'CRITICAL'
+          p.rows.unshift({
+            label: 'Unsanctioned Rails',
+            value: pyData.crawl.paymentSignals.join(', '),
+            flag: true,
+          })
+        }
+
+        // Pillar 4: Identity Harvesting Signals
+        if (p.id === 'identity' && pyData.crawl?.harvestingSignals?.length > 0) {
+          p.status = 'CRITICAL'
+          p.rows.unshift({
+            label: 'Form Harvesting',
+            value: pyData.crawl.harvestingSignals.join(', '),
+            flag: true,
+          })
+        }
+
+        return p
+      })
+
+      const finalThreat = pyData.threatIndex ?? jsData.threatIndex
+      const finalStatus = pyData.status ?? jsData.status
+      const mergedFlags = [...(pyData.flags || []), ...jsData.flags]
+      const uniqueFlags = Array.from(new Set(mergedFlags)).slice(0, 10)
+
+      const critical = enrichedPillars.filter(p => p.status === 'CRITICAL').length
+      const caution  = enrichedPillars.filter(p => p.status === 'CAUTION' || p.status === 'FAIL').length
+      const cleared  = enrichedPillars.filter(p => p.status === 'PASS').length
+
       result = {
         ...jsData,
-        threatIndex: pyData.threatIndex ?? jsData.threatIndex,
-        status:      pyData.status      ?? jsData.status,
-        flags:       [...(pyData.flags || []), ...jsData.flags].slice(0, 10),
+        threatIndex: finalThreat,
+        threat:      finalThreat,
+        status:      finalStatus,
+        critical,
+        caution,
+        cleared,
+        flags:       uniqueFlags,
+        pillars:     enrichedPillars,
+        whois:       pyData.whois || null,
+        crawl:       pyData.crawl || null,
         engine:      'python-fastapi',
       }
     }
   } catch {
-    // Python unavailable — silent fallback
+    // Python unavailable or timed out — silent fallback to JS engine
   }
 
   if (!result) result = jsAnalyze(url, text)

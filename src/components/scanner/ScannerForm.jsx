@@ -54,10 +54,17 @@ export default function ScannerForm() {
       })
       if (!res.ok) throw new Error('Scan failed')
       const data = await res.json()
+      const finalThreat = data.threatIndex ?? data.threat ?? 50
       const pillars = data.pillars?.length >= 3
-        ? [...data.pillars, ...SCAN_RESULT.pillars.slice(data.pillars.length)]
+        ? data.pillars
         : SCAN_RESULT.pillars
-      setResult({ ...SCAN_RESULT, ...data, pillars })
+      setResult({
+        ...SCAN_RESULT,
+        ...data,
+        threat: finalThreat,
+        threatIndex: finalThreat,
+        pillars,
+      })
     } catch {
       await new Promise(r => setTimeout(r, 1200))
       setResult({ ...SCAN_RESULT, url: target || '(text analysis)' })
