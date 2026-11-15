@@ -1,5 +1,5 @@
 """
-ScholarGuard — Python FastAPI Analysis Engine (v2.5)
+ScholarShield — Python FastAPI Analysis Engine (v2.5)
 Runs as sidecar on port 8000. Provides deep forensic analysis:
   POST /analyze/url    — Live web scraper, WHOIS resolver, TLD risk, homoglyph check
   POST /analyze/text   — Fee keyword extraction, coercion language scoring
@@ -20,14 +20,14 @@ from bs4 import BeautifulSoup
 import whois
 
 app = FastAPI(
-    title="ScholarGuard Forensic Analysis Engine",
+    title="ScholarShield Forensic Analysis Engine",
     description="Live web crawling, WHOIS resolution, and scholarship fraud detection API",
     version="2.5.0",
 )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://scholarguard.vercel.app", "*"],
+    allow_origins=["http://localhost:3000", "https://scholarshield.vercel.app", "*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -168,7 +168,7 @@ async def crawl_live_website(raw_url: str) -> Dict[str, Any]:
         target_url = f"https://{target_url}"
 
     headers = {
-        "User-Agent": "ScholarGuard-Audit-Bot/2.5 (+https://scholarguard.org; Academic Security Clearinghouse)",
+        "User-Agent": "ScholarShield-Audit-Bot/2.5 (+https://scholarshield.org; Academic Security Clearinghouse)",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "Accept-Language": "en-US,en;q=0.5",
     }
@@ -278,7 +278,7 @@ async def lookup_whois(hostname: str) -> Dict[str, Any]:
 def health():
     return {
         "status": "operational",
-        "engine": "ScholarGuard Analysis v2.5",
+        "engine": "ScholarShield Analysis v2.5",
         "liveCrawler": "active",
         "whoisResolver": "active",
         "timestamp": datetime.datetime.utcnow().isoformat(),
@@ -311,7 +311,7 @@ async def analyze_url(req: URLRequest):
 
     if is_known_fraud:
         domain_score = 90
-        flags.append("Domain confirmed in ScholarGuard fraud registry")
+        flags.append("Domain confirmed in ScholarShield fraud registry")
     elif is_known_legit:
         domain_score = 0
     else:
