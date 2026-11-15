@@ -1,0 +1,139 @@
+// Prisma Schema — ScholarGuard Database Layer (Day 7)
+// Run: npx prisma migrate dev --name init
+// Run: npx prisma studio  (visual DB explorer)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Scholarships ─────────────────────────────────────────────────────────────
+
+model Scholarship {
+  id          String   @id @default(cuid())
+  name        String
+  org         String
+  url         String
+  award       String
+  status      Status   @default(UNVERIFIED)
+  threatIndex Int      @default(0)
+  vectors     String[] // array of fraud vector IDs
+  domain      String?
+  irsCompliant Boolean @default(false)
+  notes       String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  scanReports ScanReport[]
+  scamReports ScamReport[]
+
+  @@index([status])
+  @@index([threatIndex])
+  @@index([url])
+}
+
+// ─── Scan Reports (automated forensic audits) ─────────────────────────────────
+
+model ScanReport {
+  id            String   @id @default(cuid())
+  url           String
+  threatIndex   Int
+  status        Status
+  engine        String   @default("js-builtin") // "js-builtin" | "python-fastapi"
+  pillars       Json     // array of pillar objects
+  flags         String[]
+  feeKeywords   String[]
+  coercionWords String[]
+  hasSSN        Boolean  @default(false)
+  hasRouting    Boolean  @default(false)
+  auditRef      String   @unique
+  createdAt     DateTime @default(now())
+
+  scholarshipId String?
+  scholarship   Scholarship? @relation(fields: [scholarshipId], references: [id])
+
+  @@index([url])
+  @@index([threatIndex])
+  @@index([createdAt])
+}
+
+// ─── Scam Reports (user submissions) ──────────────────────────────────────────
+
+model ScamReport {
+  id              String       @id @default(cuid())
+  scholarshipName String
+  orgName         String
+  url             String?
+  channel         String       // how discovered
+  indicators      String[]     // selected indicator IDs
+  amount          Float?       // demanded fee amount
+  paymentMethod   String?
+  notes           String?
+  submitterRole   String
+  submitterName   String?
+  submitterEmail  String?
+  anonymous       Boolean      @default(true)
+  fileCount       Int          @default(0)
+  priorityScore   Int          @default(0)
+  reviewStatus    ReviewStatus @default(PENDING)
+  analystId       String?
+  resolvedAt      DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  scholarshipId String?
+  scholarship   Scholarship? @relation(fields: [scholarshipId], references: [id])
+
+  @@index([reviewStatus])
+  @@index([priorityScore])
+  @@index([createdAt])
+}
+
+// ─── Analyst Team ─────────────────────────────────────────────────────────────
+
+model Analyst {
+  id         String   @id @default(cuid())
+  name       String
+  email      String   @unique
+  role       String
+  avatar     String?
+  casesTotal Int      @default(0)
+  casesDone  Int      @default(0)
+  createdAt  DateTime @default(now())
+}
+
+// ─── Watchlist ────────────────────────────────────────────────────────────────
+
+model Watchlist {
+  id        String   @id @default(cuid())
+  url       String   @unique
+  hostname  String
+  reason    String
+  addedBy   String?
+  createdAt DateTime @default(now())
+
+  @@index([hostname])
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Status {
+  VERIFIED
+  SUSPICIOUS
+  HIGH_RISK
+  FRAUD
+  CAUTION
+  UNVERIFIED
+}
+
+enum ReviewStatus {
+  PENDING
+  UNDER_REVIEW
+  CONFIRMED
+  DISMISSED
+}
+
