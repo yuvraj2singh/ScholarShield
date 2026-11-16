@@ -1,5 +1,11 @@
 # ScholarShield — Scholarship Verification Portal
 
+[![Live Production](https://img.shields.io/badge/Live%20Web%20App-Vercel-black?style=for-the-badge&logo=vercel)](https://scholar-shield-yuvadsin.vercel.app/)
+[![Backend Engine](https://img.shields.io/badge/FastAPI%20Sidecar-Render-46E3B7?style=for-the-badge&logo=render)](https://scholarshield-e6ob.onrender.com/health)
+
+- **Production Portal**: [https://scholar-shield-yuvadsin.vercel.app](https://scholar-shield-yuvadsin.vercel.app/)
+- **Live Forensic Engine**: [https://scholarshield-e6ob.onrender.com](https://scholarshield-e6ob.onrender.com/health)
+
 ## 🛡️ Project Overview
 
 A full-stack scholarship fraud detection and verification portal built with **Next.js 14 (App Router)** in plain JavaScript.
