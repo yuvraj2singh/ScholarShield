@@ -6,6 +6,8 @@
 import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 
+export const dynamic = 'force-dynamic'
+
 export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET || 'scholarshield-dev-secret-change-in-production',
 

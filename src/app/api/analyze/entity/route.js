@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * POST /api/analyze/entity
  * Proxies to the Python FastAPI /analyze/entity endpoint.

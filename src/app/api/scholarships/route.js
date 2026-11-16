@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { SCHOLARSHIPS } from '@/lib/data'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * GET /api/scholarships
  * Query params: page, limit, status, q, minThreat, maxThreat
