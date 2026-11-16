@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { Download, ChevronDown, ChevronUp, CheckCircle, XCircle } from 'lucide-react'
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
   PieChart, Pie, Cell,
 } from 'recharts'
 import { MONTHLY_DATA, VECTOR_BREAKDOWN, THREAT_PATTERNS } from '@/lib/data'
@@ -237,17 +237,39 @@ export default function ThreatsClient() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
         {/* Line chart */}
         <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl shadow-sm p-5">
-          <div className="text-sm font-bold text-gray-900 mb-1">Monthly Flagging Activity</div>
-          <div className="text-xs text-gray-500 mb-4">Flagged vs. Verified scholarships processed per month (2025)</div>
-          <ResponsiveContainer width="100%" height={220}>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+            <div>
+              <div className="text-sm font-bold text-gray-900 mb-1">Monthly Flagging Activity</div>
+              <div className="text-xs text-gray-500">Flagged vs. Verified scholarships processed per month (2025)</div>
+            </div>
+            <div className="flex items-center gap-4 text-xs">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-600 inline-block" />
+                <span className="text-gray-700 font-semibold">Flagged</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block" />
+                <span className="text-gray-700 font-semibold">Verified</span>
+              </div>
+            </div>
+          </div>
+          <ResponsiveContainer width="100%" height={230}>
             <LineChart data={MONTHLY_DATA}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
               <XAxis dataKey="month" tick={{ fontSize: 12 }} />
               <YAxis tick={{ fontSize: 12 }} />
               <Tooltip
-                formatter={(value, name) => [value, name === 'flagged' ? 'Flagged Scholarships' : 'Verified Scholarships']}
+                formatter={(value, name) => [
+                  value,
+                  String(name).toLowerCase() === 'flagged' ? 'Flagged Scholarships' : 'Verified Scholarships'
+                ]}
                 labelFormatter={(label) => `Month: ${label}`}
                 contentStyle={{ fontSize: 12, borderRadius: 10, borderColor: '#e5e7eb', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}
+              />
+              <Legend
+                verticalAlign="bottom"
+                height={30}
+                formatter={(value) => <span className="text-xs text-gray-600 font-medium">{value}</span>}
               />
               <Line type="monotone" dataKey="flagged"   stroke="#dc2626" strokeWidth={2.5} dot={false} name="Flagged" />
               <Line type="monotone" dataKey="verified"  stroke="#2563eb" strokeWidth={2.5} dot={false} name="Verified" />
