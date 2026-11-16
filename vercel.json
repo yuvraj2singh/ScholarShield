@@ -1,14 +1,4 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next"
-    }
-  ],
-  "env": {
-    "ANALYSIS_ENGINE_URL": "@analysis-engine-url"
-  },
   "headers": [
     {
       "source": "/api/(.*)",
@@ -29,4 +19,3 @@
     }
   ]
 }
-
