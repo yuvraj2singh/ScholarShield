@@ -9,18 +9,14 @@ export default function LandingPage() {
     <div className="space-y-16 py-8 sm:py-12">
       {/* ─── Hero Section ─────────────────────────────────────────────────── */}
       <section className="max-w-5xl mx-auto px-4 text-center">
-        <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-800 text-sm font-semibold px-4 py-1.5 rounded-full mb-6">
-          <Sparkles size={16} className="text-blue-600" />
-          <span>The Academic Grant Fraud Clearinghouse</span>
-        </div>
-
+        
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight leading-[1.15] mb-6">
           Autonomous Protection Against <br className="hidden sm:inline" />
           <span className="text-blue-700">Predatory Scholarship Schemes</span>
         </h1>
 
         <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-10">
-          ScholarGuard parses grant announcements, endowment solicitations, and sponsored stipends across 18,000+ domains. Every record is triaged against IRS tax filings, registrar WHOIS lineage, and federal consumer fraud databases.
+          ScholarShield parses grant announcements, endowment solicitations, and sponsored stipends across 18,000+ domains. Every record is triaged against IRS tax filings, registrar WHOIS lineage, and federal consumer fraud databases.
         </p>
 
         {/* Primary CTA with Google Authorization */}
@@ -28,7 +24,7 @@ export default function LandingPage() {
           <GoogleSignInButton
             size="lg"
             className="w-full sm:w-auto shadow-md"
-            text="Sign in with Google to Access"
+            text="Sign in"
             callbackUrl="/"
           />
           <Link
@@ -77,7 +73,7 @@ export default function LandingPage() {
       <section className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-            How ScholarGuard Protects Applicants
+            How ScholarShield Protects Applicants
           </h2>
           <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
             Multi-layered automated inspection designed specifically for academic grant fraud, fake endowments, and predatory fees.
@@ -151,7 +147,7 @@ export default function LandingPage() {
       <section className="max-w-5xl mx-auto px-4">
         <div className="bg-gradient-to-br from-blue-900 to-indigo-950 rounded-3xl p-8 sm:p-12 text-white">
           <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-3">How ScholarGuard Audits a Scholarship</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-3">How ScholarShield Audits a Scholarship</h2>
             <p className="text-sm sm:text-base text-blue-200 max-w-xl mx-auto">
               Our automated system processes solicitations through a three-stage verification pipeline:
             </p>
@@ -210,7 +206,7 @@ export default function LandingPage() {
             <GoogleSignInButton
               size="lg"
               className="w-full sm:w-auto shadow-md"
-              text="Sign in with Google"
+              text="Sign in"
               callbackUrl="/"
             />
             <Link

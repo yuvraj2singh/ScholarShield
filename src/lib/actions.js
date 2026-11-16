@@ -1,5 +1,5 @@
 /**
- * Server Actions — ScholarGuard
+ * Server Actions — ScholarShield
  * Reusable async functions for server-side data fetching.
  * Import in Server Components or API routes as needed.
  */

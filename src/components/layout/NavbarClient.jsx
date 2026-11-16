@@ -26,7 +26,7 @@ export default function NavbarClient() {
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16 gap-3">
           {/* Logo */}
           <Link
             href="/"
@@ -37,10 +37,8 @@ export default function NavbarClient() {
               <Shield size={18} className="text-white" strokeWidth={2.5} />
             </div>
             <div className="leading-tight">
-              <div className="text-base font-bold text-gray-900 tracking-tight">ScholarGuard</div>
-              <div className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold hidden sm:block">
-                Verification Network
-              </div>
+              <div className="text-base font-bold text-gray-900 tracking-tight">ScholarShield</div>
+              
             </div>
           </Link>
 
@@ -52,7 +50,7 @@ export default function NavbarClient() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`text-sm font-medium px-3.5 py-2 rounded-lg transition-colors whitespace-nowrap ${
+                  className={`text-sm font-medium px-2 py-2 rounded-lg transition-colors whitespace-nowrap ${
                     active
                       ? 'text-blue-700 bg-blue-50 font-semibold'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
@@ -130,7 +128,7 @@ export default function NavbarClient() {
             ) : (
               <GoogleSignInButton
                 size="sm"
-                text="Sign in with Google"
+                text="Sign in"
                 callbackUrl="/"
                 className="hidden sm:inline-flex"
               />
@@ -181,7 +179,7 @@ export default function NavbarClient() {
             ) : (
               <GoogleSignInButton
                 size="md"
-                text="Sign in with Google"
+                text="Sign in"
                 callbackUrl="/"
                 className="w-full justify-center"
               />

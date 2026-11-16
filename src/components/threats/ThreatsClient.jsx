@@ -303,7 +303,7 @@ export default function ThreatsClient() {
           <div className="text-xs font-bold text-blue-200 uppercase tracking-wider mb-1">In-Class Resource</div>
           <div className="text-base sm:text-lg font-bold text-white mb-1.5">Student &amp; Counselor Defense Checklist (The 7 Golden Rules)</div>
           <div className="text-sm text-blue-100 leading-relaxed max-w-xl">
-            A one-page high school student or adult-formatted checklist for high school or first-year college students. This can be used directly in class and is printed across 400 participating ScholarGuard university-party domains.
+            A one-page high school student or adult-formatted checklist for high school or first-year college students. This can be used directly in class and is printed across 400 participating ScholarShield university-party domains.
           </div>
         </div>
         <button className="inline-flex items-center gap-2 bg-white hover:bg-blue-50 text-blue-700 text-sm font-bold px-5 py-3 rounded-xl transition-colors shrink-0 shadow-sm">

@@ -28,7 +28,7 @@ export default function RegistryHero() {
             Public Scholarship Verification Registry
           </h1>
           <p className="text-base sm:text-lg text-gray-600 leading-relaxed max-w-3xl">
-            ScholarGuard autonomously parses educational grant awards, endowment announcements, and sponsored stipends across 18,000+ public domains. Every record is triaged against IRS 501(c)(3) tax filings, official university registrar domains (edu WHOIS lineage), and federal consumer fraud indices to preempt predatory fee extraction and identity harvesting.
+            ScholarShield autonomously parses educational grant awards, endowment announcements, and sponsored stipends across 18,000+ public domains. Every record is triaged against IRS 501(c)(3) tax filings, official university registrar domains (edu WHOIS lineage), and federal consumer fraud indices to preempt predatory fee extraction and identity harvesting.
           </p>
         </div>
         <div className="flex gap-3 shrink-0 flex-wrap">

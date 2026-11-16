@@ -1,8 +1,8 @@
 import ThreatsClient from '@/components/threats/ThreatsClient'
 
 export const metadata = {
-  title: 'Deceptive Scholarship Taxonomy & Pattern Intelligence — ScholarGuard',
-  description: 'A deep-dive into 5 core classification of predatory scholarship schemes, pattern data, and the analytical tools ScholarGuard uses to flag and prosecute them.',
+  title: 'Deceptive Scholarship Taxonomy & Pattern Intelligence — ScholarShield',
+  description: 'A deep-dive into 5 core classification of predatory scholarship schemes, pattern data, and the analytical tools ScholarShield uses to flag and prosecute them.',
 }
 
 export default function ThreatsPage() {
@@ -13,7 +13,7 @@ export default function ThreatsPage() {
           Deceptive Scholarship Taxonomy &amp; Pattern Intelligence
         </h1>
         <p className="text-base sm:text-lg text-gray-600 leading-relaxed max-w-3xl">
-          A deep-dive into 5 core classifications of predatory scholarship schemes, pattern data, and the analytical tools ScholarGuard uses to flag and report them. Use this library to train students, counsel families, and equip financial aid offices.
+          A deep-dive into 5 core classifications of predatory scholarship schemes, pattern data, and the analytical tools ScholarShield uses to flag and report them. Use this library to train students, counsel families, and equip financial aid offices.
         </p>
       </div>
       <ThreatsClient />

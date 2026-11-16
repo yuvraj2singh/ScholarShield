@@ -333,7 +333,7 @@ export default function AdminClient() {
               <Shield size={14} className="text-white" />
             </div>
             <div>
-              <div className="text-xs font-bold">ScholarGuard</div>
+              <div className="text-xs font-bold">ScholarShield</div>
               <div className="text-[9px] text-gray-400 uppercase tracking-widest">Admin Panel</div>
             </div>
           </div>

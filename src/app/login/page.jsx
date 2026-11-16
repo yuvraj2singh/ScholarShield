@@ -1,5 +1,5 @@
 /**
- * Login Page — ScholarGuard Google Authorization Only
+ * Login Page — ScholarShield Google Authorization Only
  * Route: /login
  */
 'use client'
@@ -22,7 +22,7 @@ function LoginContent() {
           <ShieldCheck size={28} className="text-white" strokeWidth={2.5} />
         </div>
 
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome to ScholarGuard</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome to ScholarShield</h1>
         <p className="text-base text-gray-600 mb-6 leading-relaxed">
           Sign in to access the verified scholarship registry, automated forensic scanner, and fraud intelligence tools.
         </p>
@@ -40,12 +40,12 @@ function LoginContent() {
           <GoogleSignInButton
             size="lg"
             className="w-full justify-center"
-            text="Sign in with Google"
+            text="Sign in"
             callbackUrl="/"
           />
 
           <div className="pt-4 border-t border-gray-100 text-xs text-gray-500">
-            Google authorization is the exclusive authentication standard across the ScholarGuard academic network.
+            Google authorization is the exclusive authentication standard across the ScholarShield academic network.
           </div>
         </div>
 

@@ -2,7 +2,7 @@ import ReportForm from '@/components/report/ReportForm'
 import ReportSidebar from '@/components/report/ReportSidebar'
 
 export const metadata = {
-  title: 'Report a Suspicious Scholarship — ScholarGuard',
+  title: 'Report a Suspicious Scholarship — ScholarShield',
   description: 'Report a suspicious scholarship or scam. Every submission is reviewed by certified academic fraud analysts within 24 hours.',
 }
 

@@ -4,14 +4,14 @@ import SiteFooter from '@/components/layout/SiteFooter'
 import AuthProvider from '@/components/auth/AuthProvider'
 
 export const metadata = {
-  title: 'ScholarGuard — Scholarship Verification Network',
+  title: 'ScholarShield — Scholarship Verification Network',
   description: 'Autonomous scholarship verification, scam detection, and fraud intelligence platform protecting students from predatory scholarship schemes.',
   icons: {
     icon: '/favicon.svg',
     shortcut: '/favicon.svg',
   },
   openGraph: {
-    title: 'ScholarGuard — Scholarship Verification Network',
+    title: 'ScholarShield — Scholarship Verification Network',
     description: 'Autonomous scholarship verification, scam detection, and fraud intelligence platform protecting students from predatory scholarship schemes.',
     type: 'website',
   },

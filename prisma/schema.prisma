@@ -1,4 +1,4 @@
-// Prisma Schema — ScholarGuard Database Layer (MongoDB Provider)
+// Prisma Schema — ScholarShield Database Layer (MongoDB Provider)
 // Push schema to MongoDB: npx prisma db push
 // Visual DB explorer:     npx prisma studio
 

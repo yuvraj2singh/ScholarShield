@@ -1,7 +1,7 @@
 import VerifyClient from '@/components/verify/VerifyClient'
 
 export const metadata = {
-  title: 'Verify a Link — ScholarGuard',
+  title: 'Verify a Link — ScholarShield',
   description: 'Instantly verify any scholarship URL against 1.4 million indexed threat signatures.',
 }
 

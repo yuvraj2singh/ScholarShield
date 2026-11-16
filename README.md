@@ -1,4 +1,4 @@
-# ScholarGuard — Scholarship Verification Portal
+# ScholarShield — Scholarship Verification Portal
 
 ## 🛡️ Project Overview
 

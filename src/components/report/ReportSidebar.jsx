@@ -17,7 +17,7 @@ const STEPS = [
   {
     step: 'Step 3 — 48 Hours',
     title: 'Registry Blacklist & FTC Alert',
-    desc: 'If confirmed, we add to the cross-channel directory, update the ScholarGuard watchlist, and alert the financial aid office.',
+    desc: 'If confirmed, we add to the cross-channel directory, update the ScholarShield watchlist, and alert the financial aid office.',
     icon: Flag,
   },
 ]

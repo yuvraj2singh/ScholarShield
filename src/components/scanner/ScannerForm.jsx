@@ -295,7 +295,7 @@ function ScanResults({ r }) {
                 <strong>DO NOT SUBMIT</strong> sensitive identification credentials (Social Security Number, bank account details, high school transcripts, or FAFSA login credentials). This site has been flagged for <strong>data harvesting</strong> in addition to advance-fee scholarship fraud.
               </p>
               <p className="text-xs text-amber-800">
-                The ScholarGuard verified data has dispatched an automated image descriptor directly to the upstream hosting registrar and synchronized this hash into the Federal Trade Commission Consumer Sentinel Network.
+                The ScholarShield verified data has dispatched an automated image descriptor directly to the upstream hosting registrar and synchronized this hash into the Federal Trade Commission Consumer Sentinel Network.
               </p>
             </div>
           </div>

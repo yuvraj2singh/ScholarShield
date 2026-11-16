@@ -229,7 +229,7 @@ export default function VerifyClient() {
 
       {/* What we check */}
       <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 sm:p-8">
-        <h2 className="text-lg font-bold text-gray-900 mb-5">What ScholarGuard Checks</h2>
+        <h2 className="text-lg font-bold text-gray-900 mb-5">What ScholarShield Checks</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {WHAT_WE_CHECK.map((item, i) => (
             <div key={i} className="flex items-start gap-3">

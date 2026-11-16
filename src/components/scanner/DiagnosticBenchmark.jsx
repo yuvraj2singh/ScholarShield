@@ -19,7 +19,7 @@ export default function DiagnosticBenchmark() {
     <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 sm:p-8">
       <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Diagnostic Benchmark: Legitimacy Markers</h2>
       <p className="text-sm sm:text-base text-gray-600 mb-8 leading-relaxed">
-        How ScholarGuard agents use predatory heuristics and institutional endowments to flag an advance-fee syndicate.
+        How ScholarShield agents use predatory heuristics and institutional endowments to flag an advance-fee syndicate.
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

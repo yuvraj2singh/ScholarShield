@@ -65,7 +65,7 @@ function jsAnalyze(url, text) {
   const flags = []
 
   if (isKnownFraud) {
-    score = 90; flags.push('Domain confirmed in ScholarGuard fraud registry')
+    score = 90; flags.push('Domain confirmed in ScholarShield fraud registry')
   } else if (!isKnownLegit) {
     if (HIGH_RISK_TLDS.has(tld)) { score += 35; flags.push(`High-risk TLD: ${tld}`) }
     if (hyphens >= 3)             { score += 20; flags.push(`Excessive hyphens (${hyphens})`) }

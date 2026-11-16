@@ -130,11 +130,11 @@ async function main() {
 
   // Seed default analyst
   await prisma.analyst.upsert({
-    where: { email: 'admin@scholarguard.org' },
+    where: { email: 'admin@scholarshield.org' },
     update: {},
     create: {
       name: 'Dr. Elena Vance, MLS',
-      email: 'admin@scholarguard.org',
+      email: 'admin@scholarshield.org',
       role: 'Chief Compliance Officer',
       avatar: 'EV',
       casesTotal: 142,

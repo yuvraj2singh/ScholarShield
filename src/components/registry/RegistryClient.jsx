@@ -84,7 +84,7 @@ export default function RegistryClient() {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
     const link = document.createElement('a')
     link.href = URL.createObjectURL(blob)
-    link.download = `scholarguard-registry-${tab.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.csv`
+    link.download = `scholarshield-registry-${tab.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.csv`
     link.click()
     showToast(`Exported ${filtered.length} records to CSV`)
   }
@@ -265,7 +265,7 @@ export default function RegistryClient() {
         {filtered.length > 0 && (
           <div className="px-5 py-3 border-t border-gray-100 bg-gray-50 text-xs text-gray-500 flex items-center justify-between">
             <span>{filtered.length} record{filtered.length !== 1 ? 's' : ''} in view</span>
-            <span>ScholarGuard Registry · Continuous Sync</span>
+            <span>ScholarShield Registry · Continuous Sync</span>
           </div>
         )}
       </div>

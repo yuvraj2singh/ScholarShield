@@ -1,7 +1,7 @@
 import RegistryClient from '@/components/registry/RegistryClient'
 
 export const metadata = {
-  title: 'Database Registry — ScholarGuard',
+  title: 'Database Registry — ScholarShield',
   description: 'Full tabbed registry of verified, blacklisted, watchlist, and cleared scholarships.',
 }
 
@@ -13,7 +13,7 @@ export default function RegistryPage() {
           Database Registry
         </h1>
         <p className="text-base sm:text-lg text-gray-600 leading-relaxed max-w-3xl">
-          Complete tabbed registry of all scholarships indexed by ScholarGuard, organized by verification status. Use this to audit specific scholarships before advising students.
+          Complete tabbed registry of all scholarships indexed by ScholarShield, organized by verification status. Use this to audit specific scholarships before advising students.
         </p>
       </div>
       <RegistryClient />

@@ -39,7 +39,7 @@ export default function SiteFooter() {
                 <Shield size={20} className="text-white" strokeWidth={2.5} />
               </div>
               <div>
-                <div className="text-base font-bold text-white tracking-tight">ScholarGuard</div>
+                <div className="text-base font-bold text-white tracking-tight">ScholarShield</div>
                 <div className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">Scholarship Verification Network</div>
               </div>
             </div>
@@ -107,7 +107,7 @@ export default function SiteFooter() {
         </div>
 
         <div className="border-t border-gray-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-          <span>&copy; 2025 ScholarGuard Verification Network. Open scholastic infrastructure.</span>
+          <span>&copy; 2025 ScholarShield Verification Network. Open scholastic infrastructure.</span>
           <div className="flex gap-6">
             {['Privacy Governance', 'Archival Disclosure', 'Vulnerability Reporting'].map(t => (
               <a key={t} href="#" className="hover:text-gray-300 transition-colors">{t}</a>

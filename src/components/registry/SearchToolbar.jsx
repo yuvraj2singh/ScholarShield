@@ -64,7 +64,7 @@ export default function SearchToolbar({ filters, setFilters }) {
           onChange={e => update('risk', e.target.value)}
           className="text-sm font-medium border border-gray-200 rounded-xl px-4 py-3 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer shadow-sm"
         >
-          <option value="all">ScholarGuard Risk Score: All</option>
+          <option value="all">ScholarShield Risk Score: All</option>
           <option value="critical">Critical (80–100)</option>
           <option value="high">High (60–79)</option>
           <option value="medium">Medium (40–59)</option>

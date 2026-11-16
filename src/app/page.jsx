@@ -25,7 +25,7 @@ export default function HomePage() {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center text-center p-8">
         <Loader2 size={36} className="animate-spin text-blue-600 mb-3" />
-        <p className="text-base text-gray-500 font-medium">Loading ScholarGuard…</p>
+        <p className="text-base text-gray-500 font-medium">Loading ScholarShield…</p>
       </div>
     )
   }

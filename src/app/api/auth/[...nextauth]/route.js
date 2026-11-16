@@ -1,5 +1,5 @@
 /**
- * NextAuth.js — ScholarGuard Authentication
+ * NextAuth.js — ScholarShield Authentication
  * Configured for Google OAuth authorization ONLY (no credentials/passwords).
  */
 
@@ -7,7 +7,7 @@ import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 
 export const authOptions = {
-  secret: process.env.NEXTAUTH_SECRET || 'scholarguard-dev-secret-change-in-production',
+  secret: process.env.NEXTAUTH_SECRET || 'scholarshield-dev-secret-change-in-production',
 
   providers: [
     GoogleProvider({

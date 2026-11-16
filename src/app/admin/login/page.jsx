@@ -1,5 +1,5 @@
 /**
- * Admin Login Page — ScholarGuard Google Authorization Only
+ * Admin Login Page — ScholarShield Google Authorization Only
  * Route: /admin/login
  */
 'use client'
@@ -16,7 +16,7 @@ export default function AdminLoginPage() {
           <ShieldCheck size={28} className="text-white" strokeWidth={2.5} />
         </div>
 
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">ScholarGuard Admin</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">ScholarShield Admin</h1>
         <p className="text-base text-gray-600 mb-6 leading-relaxed">
           Google authorization is required to access the compliance console and analyst tools.
         </p>

@@ -4,7 +4,7 @@ import DiagnosticBenchmark from '@/components/scanner/DiagnosticBenchmark'
 import { Loader2 } from 'lucide-react'
 
 export const metadata = {
-  title: 'Automated Forensic Scanner — ScholarGuard',
+  title: 'Automated Forensic Scanner — ScholarShield',
   description: 'Paste any scholarship URL, email solicitation, or application portal to instantly analyze domain pedigree, illicit payment demands, and mirrored content.',
 }
 
